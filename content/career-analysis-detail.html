@@ -1,0 +1,88 @@
+<style>
+  .analysis-intro { margin-bottom:1rem; }
+  .analysis-intro p { color:var(--text-secondary); margin-top:.3rem; }
+  .analysis-app { display:grid; grid-template-columns:140px minmax(0,1fr); border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#fff; min-height:690px; color:#1b2925; font:11px/1.45 system-ui,sans-serif; }
+  .a-nav { background:#fbfcfb; border-right:1px solid #e3e9e6; padding:15px 8px; }
+  .a-logo { color:#17564d; font-weight:760; font-size:11px; margin:2px 7px 23px; }
+  .a-logo i { color:#e67c58; font-style:normal; }
+  .a-navlabel { color:#91a099; font-size:7px; letter-spacing:.08em; margin:0 7px 8px; }
+  .a-navitem { padding:7px; margin:3px 0; border-radius:4px; color:#66766f; font-size:8px; }
+  .a-navitem.active { background:#eaf3ef; color:#185c51; font-weight:700; }
+  .a-main { padding:17px 20px; min-width:0; }
+  .a-header { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .a-eyebrow { color:#8b9992; font-size:7px; letter-spacing:.08em; }
+  .a-title { font-size:17px; font-weight:740; line-height:1.2; margin:3px 0; }
+  .a-sub { color:#75827c; font-size:8px; }
+  .a-controls { display:flex; gap:6px; align-items:center; white-space:nowrap; }
+  .a-select { border:1px solid #dfe7e3; background:#fff; border-radius:4px; padding:6px 7px; color:#42564d; font-size:7.5px; }
+  .a-button { background:#1e6a5e; color:white; border-radius:4px; padding:7px 9px; font-size:7px; font-weight:700; }
+  .a-context { margin-top:12px; display:flex; justify-content:space-between; gap:10px; padding:8px 10px; background:#f4f8f6; border-radius:5px; color:#5e7068; font-size:7px; }
+  .a-context strong { color:#36786a; }
+  .a-callout { border-left:3px solid #db925f; background:#fff8f2; padding:7px 9px; margin-top:9px; color:#765944; font-size:7px; }
+  .a-section-title { display:flex; align-items:baseline; justify-content:space-between; border-bottom:1px solid #e7ece9; padding-bottom:5px; margin:14px 0 2px; }
+  .a-section-title b { font-size:9px; }
+  .a-section-title span { color:#8a9691; font-size:7px; }
+  .a-findings { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .a-column { min-width:0; }
+  .finding { display:flex; gap:7px; padding:8px 0; border-bottom:1px solid #edf1ef; }
+  .finding-mark { flex:0 0 auto; width:15px; height:15px; border-radius:50%; display:grid; place-items:center; background:#e9f3ef; color:#367d6c; font-size:8px; font-weight:750; }
+  .finding-mark.unknown { background:#fff0e6; color:#ae643f; }
+  .finding-text b { display:block; font-size:7.5px; color:#33463e; }
+  .finding-text p { color:#74817b; font-size:7px; margin:2px 0 0; }
+  .evidence-tag { display:inline-block; color:#778880; background:#f2f5f3; border-radius:3px; padding:2px 4px; margin-top:4px; font-size:6px; }
+  .action-row { display:grid; grid-template-columns:22px 1fr auto; gap:7px; align-items:start; padding:8px 0; border-bottom:1px solid #edf1ef; }
+  .action-num { width:19px; height:19px; display:grid; place-items:center; border-radius:50%; background:#f5ece5; color:#a35b3e; font-size:7px; font-weight:700; }
+  .action-row b { display:block; font-size:7.5px; }
+  .action-row p { color:#74817b; font-size:7px; margin:2px 0; }
+  .action-done { color:#4e7d70; font-size:6px; white-space:nowrap; }
+  .source-line { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0; color:#56685f; font-size:7px; }
+  .source-line span { color:#7d8983; font-size:6.5px; }
+  .source-placeholder { color:#a25c3c !important; }
+  .chat-area { margin-top:13px; padding-top:10px; border-top:1px solid #e5ebe8; }
+  .chat-head { display:flex; align-items:baseline; justify-content:space-between; }
+  .chat-head b { font-size:9px; }
+  .chat-head span { color:#8a9691; font-size:6.5px; }
+  .chat-bubble { max-width:86%; margin-top:7px; padding:8px 9px; background:#f2f6f4; color:#4c6258; border-radius:5px; font-size:7px; }
+  .chat-source { color:#448476; font-size:6.5px; margin-top:4px; }
+  .chat-compose { margin-top:7px; display:flex; align-items:center; justify-content:space-between; gap:8px; border:1px solid #dfe7e3; border-radius:5px; padding:7px 9px; color:#9aa59f; font-size:7px; }
+  .chat-send { background:#e8f0ec; color:#317565; padding:4px 7px; border-radius:3px; }
+  .analysis-footer { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; padding-top:9px; border-top:1px solid #e5ebe8; color:#77847e; font-size:7px; }
+  .plan-cta { background:#1e6a5e; color:#fff; border-radius:4px; padding:7px 9px; font-size:7px; font-weight:700; }
+  @media(max-width:780px) { .analysis-app{grid-template-columns:82px minmax(0,1fr)} .a-nav{padding:10px 4px}.a-navitem{padding:6px 4px;font-size:7px}.a-main{padding:12px 9px}.a-header{display:block}.a-controls{margin-top:7px}.a-findings{grid-template-columns:1fr}.a-context{display:block}.a-context span{display:block;margin-top:3px} }
+</style>
+
+<div class="analysis-intro">
+  <h2>职业分析：看清基础、待确认项和下一步</h2>
+  <p>分析内容来自用户画像与当前资料；未提及的信息先追问，不直接判作能力差距。</p>
+</div>
+
+<div class="analysis-app">
+  <aside class="a-nav"><div class="a-logo">向前<i>·</i>职业规划</div><div class="a-navlabel">工作空间</div><div class="a-navitem">⌂　今日概览</div><div class="a-navitem">◉　个人画像</div><div class="a-navitem">◇　岗位探索</div><div class="a-navitem active">▤　职业分析</div><div class="a-navitem">✓　行动计划</div></aside>
+  <main class="a-main">
+    <div class="a-header"><div><div class="a-eyebrow">03 / ANALYSIS</div><div class="a-title">后端开发 · 职业分析</div><div class="a-sub">基于你的个人画像，整理当前基础和可继续确认的方向。</div></div><div class="a-controls"><span class="a-select">目标岗位：后端开发　⌄</span><span class="a-button">更新分析</span></div></div>
+    <div class="a-context"><div>画像摘要：<strong>大三 · 软件工程 · Java / Python / MySQL</strong></div><span>分析更新时间：今天　·　示例界面内容</span></div>
+    <div class="a-callout">说明：没有填写某项经历只表示“目前未知”，不等于你不会；你可以补充画像或在下方继续问。</div>
+    <div class="a-findings">
+      <section class="a-column"><div class="a-section-title"><b>已经提到的基础</b><span>来自你的画像</span></div>
+        <div class="finding"><span class="finding-mark">✓</span><div class="finding-text"><b>接触过 Java、Python 和 MySQL</b><p>这些技术与服务端开发相关；熟练程度还需结合项目经历了解。</p><span class="evidence-tag">依据：已填写技能</span></div></div>
+        <div class="finding"><span class="finding-mark">✓</span><div class="finding-text"><b>正在参与一个软件项目</b><p>可以用项目里的接口、数据表和个人负责内容说明实践经验。</p><span class="evidence-tag">依据：项目经历描述</span></div></div>
+      </section>
+      <section class="a-column"><div class="a-section-title"><b>还需要确认</b><span>未知不等于不足</span></div>
+        <div class="finding"><span class="finding-mark unknown">?</span><div class="finding-text"><b>项目中是否亲自实现过接口和数据库操作</b><p>目前的描述还不足以判断具体负责范围。</p><span class="evidence-tag">状态：待补充信息</span></div></div>
+        <div class="finding"><span class="finding-mark unknown">?</span><div class="finding-text"><b>是否做过接口测试或错误处理</b><p>可回忆课程项目，也可以先选一个小任务尝试。</p><span class="evidence-tag">状态：待确认</span></div></div>
+      </section>
+    </div>
+    <section><div class="a-section-title"><b>建议先做的事</b><span>可加入四周行动计划</span></div>
+      <div class="action-row"><span class="action-num">1</span><div><b>列出当前项目中你亲自完成的接口和数据表</b><p>写清需求、你负责的代码，以及一次遇到的问题。</p></div><span class="action-done">完成标准：3 条记录</span></div>
+      <div class="action-row"><span class="action-num">2</span><div><b>为其中一个接口补充正常、异常和边界测试</b><p>用实际例子确认接口设计与测试的基础。</p></div><span class="action-done">完成标准：用例可复现</span></div>
+    </section>
+    <section><div class="a-section-title"><b>分析参考</b><span>来源状态明确展示</span></div>
+      <div class="source-line"><div>后端开发岗位能力要求　<span class="source-placeholder">示例资料，仅用于演示</span></div><span>团队示例内容 · 暂无外部链接 · 2026-09-30</span></div>
+    </section>
+    <section class="chat-area"><div class="chat-head"><b>继续问一个问题</b><span>回答会显示检索到的资料依据</span></div>
+      <div class="chat-bubble">如果我还没有完整项目经验，能先从什么任务开始？<div class="chat-source">回答依据：当前岗位资料 · 示例资料</div></div>
+      <div class="chat-compose"><span>例如：我做过这个项目的哪些部分？</span><span class="chat-send">发送　↑</span></div>
+    </section>
+    <div class="analysis-footer"><span>切换目标岗位会生成对应分析；已保存的旧分析仍可查看。</span><span class="plan-cta">用这份分析生成四周计划　→</span></div>
+  </main>
+</div>

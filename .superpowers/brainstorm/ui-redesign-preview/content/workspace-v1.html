@@ -1,0 +1,86 @@
+<style>
+  :root { --navy:#10252b; --ink:#17252b; --muted:#728087; --line:#e4eaeb; --paper:#f5f7f6; --white:#fff; --mint:#b8ead8; --green:#1d6655; --orange:#f2a35b; --blue:#dcecf4; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,"Noto Sans SC",system-ui,sans-serif; }
+  .app { display:grid; grid-template-columns:235px 1fr; min-height:650px; max-width:1180px; margin:0 auto; background:var(--paper); overflow:hidden; border:1px solid #dfe7e6; border-radius:18px; box-shadow:0 24px 60px rgba(24,54,58,.12); animation:rise .55s ease both; }
+  .side { background:var(--navy); color:#fff; padding:25px 18px; display:flex; flex-direction:column; }
+  .brand { display:flex; gap:10px; align-items:center; margin-bottom:42px; }
+  .brand-mark { width:32px; height:32px; display:grid; place-items:center; border:1px solid rgba(184,234,216,.7); color:var(--mint); border-radius:10px; font-size:17px; }
+  .brand b { display:block; font-size:14px; letter-spacing:.02em; }
+  .brand span { display:block; color:#91a9ac; font-size:10px; margin-top:3px; }
+  .nav-label { color:#70888c; font-size:9px; letter-spacing:.16em; margin:0 10px 10px; text-transform:uppercase; }
+  .nav { display:grid; gap:5px; }
+  .nav-item { color:#a8bbbc; padding:11px 12px; border-radius:9px; font-size:12px; display:flex; align-items:center; gap:10px; }
+  .nav-item.active { color:#fff; background:#245044; box-shadow:inset 3px 0 0 var(--mint); }
+  .nav-item .num { font:10px ui-monospace,monospace; color:#6e898d; }
+  .nav-item.active .num { color:var(--mint); }
+  .side-foot { margin-top:auto; border-top:1px solid #294249; padding:15px 8px 0; color:#88a0a3; font-size:10px; line-height:1.6; }
+  .status { display:flex; gap:6px; align-items:center; color:#b6e8d6; margin-bottom:4px; }
+  .dot { width:6px; height:6px; border-radius:50%; background:#75d5af; box-shadow:0 0 0 4px rgba(117,213,175,.12); }
+  .main { padding:28px 34px 35px; }
+  .topline { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+  .eyebrow { color:var(--green); font:700 10px ui-monospace,monospace; letter-spacing:.15em; }
+  h1 { font-size:28px; letter-spacing:-.02em; margin:8px 0 5px; line-height:1.1; }
+  .sub { color:var(--muted); font-size:12px; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--mint); color:var(--green); display:grid; place-items:center; font-weight:800; font-size:12px; }
+  .hero { margin-top:24px; background:linear-gradient(120deg,#e5f5ee,#eaf3f7); border:1px solid #d4e9e1; border-radius:14px; padding:21px 23px; display:flex; justify-content:space-between; align-items:center; gap:25px; animation:fade .65s .1s ease both; }
+  .hero-tag { color:var(--green); font-size:10px; font-weight:800; letter-spacing:.09em; }
+  .hero h2 { font-size:17px; margin:8px 0 5px; }
+  .hero p { margin:0; color:#667a7c; font-size:11px; line-height:1.6; max-width:490px; }
+  .button { background:var(--green); color:#fff; border:0; padding:10px 14px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; box-shadow:0 7px 16px rgba(29,102,85,.18); }
+  .section-title { display:flex; justify-content:space-between; align-items:end; margin:27px 0 12px; }
+  .section-title h3 { font-size:14px; margin:0; }
+  .section-title span { color:var(--muted); font-size:10px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .role { background:#fff; border:1px solid var(--line); border-radius:12px; padding:15px; min-height:133px; transition:transform .2s ease, box-shadow .2s ease; animation:fade .65s .18s ease both; }
+  .role:hover { transform:translateY(-4px); box-shadow:0 12px 24px rgba(25,50,52,.09); }
+  .role-top { display:flex; justify-content:space-between; align-items:center; }
+  .role-code { color:var(--green); font:700 9px ui-monospace,monospace; }
+  .role-icon { width:25px; height:25px; display:grid; place-items:center; background:#edf7f3; border-radius:7px; color:var(--green); font-size:13px; }
+  .role h4 { margin:12px 0 5px; font-size:14px; }
+  .role p { margin:0; color:var(--muted); font-size:10px; line-height:1.5; }
+  .role-link { display:block; color:var(--green); font-size:10px; font-weight:800; margin-top:13px; }
+  .lower { display:grid; grid-template-columns:1.15fr .85fr; gap:18px; }
+  .panel { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .next-row { display:flex; gap:11px; align-items:flex-start; padding:10px 0; border-top:1px solid #edf1f1; }
+  .check { width:21px; height:21px; display:grid; place-items:center; border-radius:7px; background:#edf7f3; color:var(--green); font-size:11px; flex:none; }
+  .next-row b { font-size:11px; display:block; margin-bottom:3px; }
+  .next-row span { color:var(--muted); font-size:10px; line-height:1.4; }
+  .time { color:var(--orange); font:700 10px ui-monospace,monospace; margin-left:auto; white-space:nowrap; }
+  .profile-line { display:flex; justify-content:space-between; border-bottom:1px solid #edf1f1; padding:10px 0; font-size:11px; }
+  .profile-line span { color:var(--muted); }
+  .progress { height:5px; background:#eef2f1; border-radius:4px; overflow:hidden; margin-top:14px; }
+  .progress i { display:block; width:58%; height:100%; background:var(--orange); border-radius:4px; animation:load 1.2s .3s ease both; }
+  @keyframes rise { from {opacity:0; transform:translateY(12px)} to {opacity:1; transform:none} }
+  @keyframes fade { from {opacity:0; transform:translateY(8px)} to {opacity:1; transform:none} }
+  @keyframes load { from {width:0} to {width:58%} }
+  @media(max-width:780px){ .app{grid-template-columns:1fr}.side{display:none}.main{padding:22px 18px}.hero{align-items:flex-start;flex-direction:column}.grid3,.lower{grid-template-columns:1fr} }
+</style>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="brand-mark">↗</div><div><b>向前 · 职业规划</b><span>AI CAREER WORKSPACE</span></div></div>
+    <div class="nav-label">Workspace</div>
+    <div class="nav">
+      <div class="nav-item active"><span class="num">01</span>今日概览</div>
+      <div class="nav-item"><span class="num">02</span>个人画像</div>
+      <div class="nav-item"><span class="num">03</span>岗位探索</div>
+      <div class="nav-item"><span class="num">04</span>职业分析</div>
+      <div class="nav-item"><span class="num">05</span>行动计划</div>
+    </div>
+    <div class="side-foot"><div class="status"><i class="dot"></i>系统运行正常</div><div>模型 · qwen3.7-flash</div><div>资料 · 向量检索</div></div>
+  </aside>
+  <main class="main">
+    <div class="topline"><div><div class="eyebrow">01 / DAILY OVERVIEW</div><h1>早上好，林同学</h1><div class="sub">今天用一小步，把职业方向变得更清楚。</div></div><div class="avatar">林</div></div>
+    <section class="hero"><div><div class="hero-tag">建议的下一步 · 15 MIN</div><h2>先把你的项目经历补充完整</h2><p>你的画像已经有专业和技能信息，再补充一次课程项目，后续的岗位对照会更具体。</p></div><button class="button">继续填写画像 →</button></section>
+    <div class="section-title"><h3>探索一个方向</h3><span>选择后可查看岗位分析</span></div>
+    <div class="grid3">
+      <div class="role"><div class="role-top"><span class="role-code">ROLE / 01</span><span class="role-icon">⌘</span></div><h4>后端开发</h4><p>服务、数据与接口。适合喜欢拆解问题和构建系统的人。</p><span class="role-link">查看方向 →</span></div>
+      <div class="role"><div class="role-top"><span class="role-code">ROLE / 02</span><span class="role-icon">◇</span></div><h4>前端开发</h4><p>页面、交互与体验。把想法变成可使用的产品界面。</p><span class="role-link">查看方向 →</span></div>
+      <div class="role"><div class="role-top"><span class="role-code">ROLE / 03</span><span class="role-icon">✓</span></div><h4>测试开发</h4><p>质量、自动化与验证。让复杂系统更可靠、更可控。</p><span class="role-link">查看方向 →</span></div>
+    </div>
+    <div class="lower">
+      <div><div class="section-title"><h3>最近的下一步</h3><span>按优先级排列</span></div><div class="panel"><div class="next-row"><div class="check">1</div><div><b>补充一个课程项目</b><span>让系统知道你实际做过什么</span></div><div class="time">15 min</div></div><div class="next-row"><div class="check">2</div><div><b>体验后端接口任务</b><span>可选，不影响继续探索其他方向</span></div><div class="time">30 min</div></div><div class="next-row"><div class="check">3</div><div><b>生成第一版行动计划</b><span>完成岗位分析后即可开始</span></div><div class="time">5 min</div></div></div></div>
+      <div><div class="section-title"><h3>当前画像</h3><span>可随时修改</span></div><div class="panel"><div class="profile-line"><b>年级与专业</b><span>大三 · 软件工程</span></div><div class="profile-line"><b>每周准备时间</b><span>5 小时</span></div><div class="profile-line"><b>已提到的技能</b><span>Python · SQL · Git</span></div><div class="progress"><i></i></div><div style="color:#728087;font-size:10px;margin-top:8px">画像信息可分多次补充，不需要一次填完。</div></div></div>
+    </div>
+  </main>
+</div>

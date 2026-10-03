@@ -1,0 +1,210 @@
+---
+id: guide-前端学习路线-frontend
+title: 前端学习路线
+job_category: frontend
+document_type: learning_path
+source_name: 尚硅谷、黑马程序员、MDN
+source_url: https://developer.mozilla.org/zh-CN/
+updated_at: 未提供
+review_status: not_reviewed
+freshness: general
+content_kind: guide
+is_placeholder: false
+---
+
+适用岗位：前端开发
+
+# 前端学习路线
+
+## 岗位类别
+前端开发
+
+## 资料类型
+学习路径
+
+## 正文内容
+
+### 一、学习路线总览
+
+```
+HTML/CSS → JavaScript → 框架学习 → 工程化 → 项目实战 → 进阶提升
+```
+
+### 二、各阶段详细内容
+
+#### 阶段一：HTML/CSS（2-3周）
+
+**学习内容**：
+- HTML基础
+  - 标签、属性
+  - 表单、表格
+  - 语义化标签
+- CSS基础
+  - 选择器
+  - 盒模型
+  - 布局（Flex、Grid）
+  - 响应式设计
+
+**推荐资源**：
+- 书籍：《HTML & CSS设计与构建网站》
+- 视频：黑马程序员HTML/CSS
+- MDN文档：https://developer.mozilla.org/zh-CN/
+
+**学习目标**：
+- 能独立编写静态页面
+- 理解盒模型和布局
+- 掌握响应式设计
+
+#### 阶段二：JavaScript（4-6周）
+
+**学习内容**：
+- 基础语法
+- 数据类型
+- 函数
+- 对象
+- 数组
+- DOM操作
+- 事件处理
+- 异步编程（Promise、async/await）
+- ES6+新特性
+
+**推荐资源**：
+- 书籍：《JavaScript高级程序设计》《你不知道的JavaScript》
+- 视频：黑马程序员JavaScript
+- MDN文档：https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
+
+**学习目标**：
+- 熟练掌握JavaScript
+- 理解异步编程
+- 掌握ES6+新特性
+
+#### 阶段三：框架学习（4-6周）
+
+**学习内容**：
+- Vue.js
+  - 基础语法
+  - 组件化
+  - 路由（Vue Router）
+  - 状态管理（Vuex/Pinia）
+  - 组合式API
+- React（可选）
+  - JSX
+  - 组件
+  - Hooks
+  - 状态管理（Redux）
+  - 路由（React Router）
+
+**推荐资源**：
+- Vue官方文档：https://cn.vuejs.org/
+- React官方文档：https://zh-hans.reactjs.org/
+- 视频：尚硅谷Vue、黑马程序员React
+
+**学习目标**：
+- 掌握至少一个框架
+- 能独立开发SPA应用
+- 理解组件化思想
+
+#### 阶段四：工程化（2-3周）
+
+**学习内容**：
+- 包管理工具
+  - npm
+  - yarn
+- 构建工具
+  - Webpack
+  - Vite
+- 代码规范
+  - ESLint
+  - Prettier
+- 版本控制
+  - Git
+
+**推荐资源**：
+- Webpack官方文档：https://www.webpackjs.com/
+- Vite官方文档：https://cn.vitejs.dev/
+
+**学习目标**：
+- 掌握Webpack/Vite配置
+- 理解模块化开发
+- 掌握Git使用
+
+#### 阶段五：TypeScript（2-3周）
+
+**学习内容**：
+- 类型系统
+- 接口
+- 泛型
+- 类
+- 模块
+
+**推荐资源**：
+- TypeScript官方文档：https://www.typescriptlang.org/zh/
+- 书籍：《TypeScript编程》
+
+**学习目标**：
+- 掌握TypeScript基础
+- 能在项目中使用TypeScript
+
+#### 阶段六：项目实战（4-6周）
+
+**项目推荐**：
+- 个人博客
+- Todo应用
+- 电商网站
+- 管理后台
+- 移动端应用
+
+**项目要求**：
+- 使用Vue/React
+- 使用TypeScript
+- 响应式设计
+- 代码规范
+
+### 三、学习时间规划
+
+**总时间**：4-6个月
+
+| 阶段    | 时间  | 内容       |
+| ------- | ----- | ---------- |
+| 第1阶段 | 2-3周 | HTML/CSS   |
+| 第2阶段 | 4-6周 | JavaScript |
+| 第3阶段 | 4-6周 | 框架学习   |
+| 第4阶段 | 2-3周 | 工程化     |
+| 第5阶段 | 2-3周 | TypeScript |
+| 第6阶段 | 4-6周 | 项目实战   |
+
+### 四、前端技术栈
+
+#### 1. 基础技术
+- HTML5
+- CSS3
+- JavaScript/TypeScript
+
+#### 2. 框架
+- Vue.js
+- React
+- Angular
+
+#### 3. 工程化
+- Webpack/Vite
+- npm/yarn
+- ESLint/Prettier
+
+#### 4. 跨端开发
+- React Native
+- Flutter
+- Taro
+- uni-app
+
+### 五、来源信息
+
+**来源名称**：尚硅谷、黑马程序员、MDN
+
+**来源链接**：
+- 尚硅谷：https://www.atguigu.com
+- 黑马程序员：https://www.itheima.com
+- MDN：https://developer.mozilla.org/zh-CN/
+
+**发布时间**：2026年
+
+**整理时间**：2026-10-01

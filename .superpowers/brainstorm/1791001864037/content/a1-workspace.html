@@ -1,0 +1,49 @@
+<style>
+  :root{--ink:#172322;--muted:#6b7774;--paper:#f5f6f2;--panel:#fff;--line:#dfe5df;--forest:#1d5b4d;--mint:#dceee7;--yellow:#f5e9a9;--blue:#d9e9f1;--coral:#e8896f;}
+  *{box-sizing:border-box}
+  body{background:#eef1ec!important}
+  .mock-shell{max-width:1180px;margin:18px auto 40px;background:var(--paper);border:1px solid #d6ded8;border-radius:16px;overflow:hidden;box-shadow:0 18px 45px rgba(28,48,43,.12);font-family:Inter,"Noto Sans SC",system-ui,sans-serif;color:var(--ink)}
+  .mock-top{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em}.brand-mark{width:25px;height:25px;border-radius:8px;background:var(--forest);color:#fff;display:grid;place-items:center;font-size:12px}.top-right{display:flex;align-items:center;gap:13px;color:var(--muted);font-size:12px}.avatar{width:28px;height:28px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;color:#514a27;font-weight:700}
+  .mock-body{display:grid;grid-template-columns:205px 1fr;min-height:650px}.mock-side{background:#203532;padding:23px 15px;color:#eaf2ed}.side-kicker{font-size:9px;letter-spacing:.12em;color:#9eb7ad;margin:4px 10px 22px}.side-nav{display:grid;gap:5px}.side-item{padding:11px 12px;border-radius:8px;color:#bed0c9;font-size:13px;display:flex;align-items:center;gap:10px}.side-item.active{background:#e6f2e8;color:#173f35;font-weight:750}.side-icon{width:18px;text-align:center;font-size:13px}.side-bottom{margin-top:170px;border-top:1px solid rgba(255,255,255,.13);padding:16px 10px;color:#a7bcb4;font-size:11px;line-height:1.55}
+  .mock-main{padding:30px 34px 46px}.crumb{font-size:10px;color:var(--forest);font-weight:800;letter-spacing:.13em}.head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-top:7px}.head-row h1{font-size:28px;letter-spacing:-.04em;margin:0 0 6px}.head-row p{color:var(--muted);font-size:13px;margin:0}.date{font-size:11px;color:var(--muted);white-space:nowrap}
+  .hero{margin-top:24px;background:var(--forest);color:#fff;border-radius:11px;padding:21px 24px;display:flex;justify-content:space-between;gap:22px;align-items:center}.hero-label{font-size:10px;letter-spacing:.12em;color:#b9dbca;font-weight:700}.hero h2{font-size:19px;letter-spacing:-.03em;margin:7px 0 7px}.hero p{font-size:12px;color:#d4e6dc;margin:0;line-height:1.55}.hero-button{background:var(--yellow);color:#3d3a22;padding:11px 15px;border-radius:7px;font-size:12px;font-weight:800;white-space:nowrap}
+  .section-head{display:flex;justify-content:space-between;align-items:center;margin:31px 0 13px}.section-head h3{font-size:15px;margin:0}.section-head span{font-size:11px;color:var(--muted)}.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.role{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;min-height:154px}.role-top{display:flex;justify-content:space-between;align-items:center}.role-name{font-size:15px;font-weight:800}.role-code{font-size:9px;color:var(--muted);letter-spacing:.12em}.role p{color:var(--muted);font-size:11px;line-height:1.5;min-height:34px}.role-foot{display:flex;justify-content:space-between;align-items:center;margin-top:15px}.role-status{font-size:10px;color:var(--forest);font-weight:700}.role-link{font-size:11px;color:var(--forest);font-weight:800}
+  .lower{display:grid;grid-template-columns:1.12fr .88fr;gap:14px;margin-top:14px}.panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px}.panel h3{font-size:14px;margin:0 0 14px}.focus{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--line)}.focus-main{display:flex;gap:12px;align-items:center}.focus-dot{width:34px;height:34px;border-radius:9px;background:var(--mint);display:grid;place-items:center;color:var(--forest);font-weight:800}.focus-main strong{display:block;font-size:13px}.focus-main span{display:block;font-size:11px;color:var(--muted);margin-top:3px}.small-btn{font-size:11px;color:var(--forest);font-weight:800;border:1px solid #b9d5c7;border-radius:6px;padding:7px 10px}.task{display:flex;gap:10px;margin-top:14px}.check{width:17px;height:17px;border:1px solid #a9c4b6;border-radius:5px;margin-top:1px}.task strong{font-size:12px}.task p{font-size:11px;color:var(--muted);margin:4px 0 0;line-height:1.45}.meta{font-size:10px;color:var(--forest);margin-top:6px}.history{display:grid;gap:12px}.history-item{border-left:3px solid var(--blue);padding-left:11px}.history-item strong{font-size:12px}.history-item p{font-size:11px;color:var(--muted);margin:4px 0 0}.source{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:10px;color:var(--muted)}
+  @media(max-width:850px){.mock-body{grid-template-columns:1fr}.mock-side{display:none}.mock-main{padding:24px 20px 34px}.role-grid,.lower{grid-template-columns:1fr}.head-row{display:block}.date{margin-top:8px}.hero{align-items:flex-start;flex-direction:column}.hero-button{align-self:flex-start}}
+</style>
+
+<div class="mock-shell">
+  <div class="mock-top">
+    <div class="brand"><span class="brand-mark">◎</span>职业方向工作台</div>
+    <div class="top-right"><span>大三 · 软件工程</span><span class="avatar">同</span></div>
+  </div>
+  <div class="mock-body">
+    <aside class="mock-side">
+      <div class="side-kicker">CAREER GUIDANCE</div>
+      <div class="side-nav">
+        <div class="side-item active"><span class="side-icon">⌂</span>今日概览</div>
+        <div class="side-item"><span class="side-icon">◌</span>个人画像</div>
+        <div class="side-item"><span class="side-icon">▦</span>岗位探索</div>
+        <div class="side-item"><span class="side-icon">◈</span>职业分析</div>
+        <div class="side-item"><span class="side-icon">✓</span>行动计划</div>
+      </div>
+      <div class="side-bottom">模型已连接<br>资料检索 · 向量模式<br><br>上次更新 · 今天 14:20</div>
+    </aside>
+    <main class="mock-main">
+      <div class="crumb">TODAY / OVERVIEW</div>
+      <div class="head-row"><div><h1>今天，从一个小动作开始</h1><p>把职业方向从“想一想”变成下一步可以完成的事。</p></div><div class="date">2026 年 10 月 3 日 · 周六</div></div>
+      <div class="hero"><div><div class="hero-label">NEXT STEP</div><h2>继续完善后端开发分析</h2><p>你已经记录了 Java 和课程项目，下一步可以核对数据库与接口实践经历。</p></div><div class="hero-button">继续分析 →</div></div>
+      <div class="section-head"><h3>正在比较的方向</h3><span>没有排名，先看清差异</span></div>
+      <div class="role-grid">
+        <div class="role"><div class="role-top"><span class="role-name">后端开发</span><span class="role-code">01</span></div><p>服务、接口、业务逻辑和数据处理。</p><div class="role-foot"><span class="role-status">已保存分析</span><span class="role-link">打开 →</span></div></div>
+        <div class="role"><div class="role-top"><span class="role-name">前端开发</span><span class="role-code">02</span></div><p>页面结构、交互体验和接口接入。</p><div class="role-foot"><span class="role-status">待了解</span><span class="role-link">查看 →</span></div></div>
+        <div class="role"><div class="role-top"><span class="role-name">测试开发</span><span class="role-code">03</span></div><p>测试设计、自动化验证和问题定位。</p><div class="role-foot"><span class="role-status">待了解</span><span class="role-link">查看 →</span></div></div>
+      </div>
+      <div class="lower">
+        <section class="panel"><h3>本周准备</h3><div class="focus"><div class="focus-main"><div class="focus-dot">1</div><div><strong>梳理一个课程项目</strong><span>目标：能讲清楚做了什么、为什么这样做</span></div></div><div class="small-btn">打开计划</div></div><div class="task"><div class="check"></div><div><strong>写下项目的功能、技术和个人负责部分</strong><p>预计 1 小时 · 完成后留下 5 句话的项目摘要</p><div class="meta">学习资料 · 项目介绍模板</div></div></div><div class="task"><div class="check"></div><div><strong>补充一次接口或数据库实践</strong><p>预计 2 小时 · 保留运行结果和遇到的问题</p><div class="meta">学习资料 · 后端开发岗位能力要求</div></div></div></section>
+        <section class="panel"><h3>最近记录</h3><div class="history"><div class="history-item"><strong>职业分析 · 后端开发</strong><p>已知基础、待确认事项和三条建议行动</p></div><div class="history-item"><strong>咨询 · “测试开发和后端有什么区别？”</strong><p>昨天 · 2 条资料依据</p></div><div class="history-item"><strong>个人画像</strong><p>每周准备时间 · 5 小时</p></div></div><div class="source">资料状态分开显示：模型生成不等于资料已核验。</div></section>
+      </div>
+    </main>
+  </div>
+</div>

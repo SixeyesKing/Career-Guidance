@@ -1,0 +1,93 @@
+<style>
+  .flow-heading { margin-bottom: 1rem; }
+  .flow-heading p { color:var(--text-secondary); margin-top:.35rem; }
+  .flow-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+  .flow-choice { border:2px solid var(--border); border-radius:8px; background:var(--bg-secondary); overflow:hidden; cursor:pointer; }
+  .flow-choice:hover { border-color:var(--accent); }
+  .flow-choice.selected { border-color:var(--selected-border); }
+  .flow-caption { padding:.65rem .8rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.6rem; }
+  .flow-caption b { font-size:.9rem; }
+  .flow-caption small { display:block; color:var(--text-secondary); font-size:.72rem; }
+  .mini-window { color:#1b2825; background:#f8faf9; min-height:420px; font:11px/1.45 system-ui,sans-serif; }
+  .mini-head { height:36px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; border-bottom:1px solid #e2e9e6; background:#fff; }
+  .mini-brand { font-weight:750; color:#17564d; font-size:11px; }
+  .mini-brand i { color:#e77a59; font-style:normal; }
+  .mini-user { color:#697a73; font-size:8px; }
+  .mini-layout { display:grid; grid-template-columns:105px 1fr; min-height:384px; }
+  .mini-nav { background:#fff; border-right:1px solid #e2e9e6; padding:12px 7px; }
+  .mini-nav-title { color:#91a099; font-size:7px; margin:3px 6px 9px; text-transform:uppercase; letter-spacing:.08em; }
+  .mini-nav-item { padding:7px 6px; margin-bottom:3px; border-radius:4px; color:#65766e; font-size:8px; }
+  .mini-nav-item.active { color:#175c50; background:#e7f2ee; font-weight:700; }
+  .mini-main { padding:16px; }
+  .mini-eyebrow { color:#899791; font-size:7px; letter-spacing:.08em; }
+  .mini-title { color:#1a2925; font-size:15px; font-weight:740; margin:4px 0; line-height:1.25; }
+  .mini-copy { color:#77857f; font-size:8px; }
+  .welcome-panel { margin-top:15px; padding:14px; border-radius:6px; background:#fff; border:1px solid #e3eae6; }
+  .first-step { display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-top:1px solid #edf1ef; }
+  .step-num { width:20px; height:20px; display:grid; place-items:center; flex:0 0 auto; border-radius:50%; background:#eaf2ef; color:#317665; font-size:8px; font-weight:750; }
+  .first-step b { display:block; font-size:9px; }
+  .first-step small { color:#77857f; font-size:7.5px; }
+  .mini-button { display:inline-block; margin-top:11px; padding:7px 10px; border-radius:4px; color:#fff; background:#1e6a5e; font-size:8px; font-weight:700; }
+  .mini-muted { color:#718078; font-size:7.5px; margin-left:8px; }
+  .return-banner { margin-top:10px; padding:9px; background:#edf4f1; color:#5d7169; border-radius:5px; font-size:8px; }
+  .return-banner b { color:#286b5e; }
+  .profile-form { margin-top:14px; background:white; border:1px solid #e3eae6; border-radius:6px; padding:12px; }
+  .form-label { color:#485a52; font-size:7px; margin:7px 0 3px; display:block; }
+  .form-input { min-height:25px; border:1px solid #dfe7e3; border-radius:4px; background:#fbfcfb; padding:6px 7px; color:#86938d; font-size:7.5px; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+  .skill-chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
+  .skill { padding:3px 6px; border:1px solid #dce8e3; background:#edf5f1; border-radius:12px; color:#367464; font-size:7px; }
+  .skill.off { background:white; color:#829089; border-color:#e3e9e6; }
+  .helper { margin-top:8px; color:#77857f; font-size:7px; }
+  .footer-note { margin-top:9px; border-top:1px solid #ebefed; padding-top:8px; color:#7b8983; font-size:7px; }
+  @media(max-width:800px) { .flow-grid{grid-template-columns:1fr;} }
+</style>
+
+<div class="flow-heading">
+  <h2>A 方向的首次使用入口</h2>
+  <p>区别只在打开应用后的第一步；填好画像后，两种方式都会进入同一个日常工作台。</p>
+</div>
+
+<div class="flow-grid">
+  <div class="flow-choice" data-choice="先进入工作台" onclick="toggleSelect(this)">
+    <div class="flow-caption"><span class="letter">A1</span><div><b>先进入工作台</b><small>新用户看到清楚的开始入口；老用户直接继续上次进度</small></div></div>
+    <div class="mini-window">
+      <div class="mini-head"><div class="mini-brand">向前<i>·</i>职业规划</div><div class="mini-user">欢迎，新同学</div></div>
+      <div class="mini-layout">
+        <aside class="mini-nav"><div class="mini-nav-title">导航</div><div class="mini-nav-item active">⌂　今日概览</div><div class="mini-nav-item">◉　个人画像</div><div class="mini-nav-item">◇　岗位探索</div><div class="mini-nav-item">▤　职业分析</div><div class="mini-nav-item">✓　行动计划</div></aside>
+        <main class="mini-main">
+          <div class="mini-eyebrow">你的求职准备空间</div><div class="mini-title">先从认识自己开始。</div><div class="mini-copy">不必一次填完，之后可以随时补充和修改。</div>
+          <section class="welcome-panel"><b style="font-size:10px">建立一份简单的个人画像</b><div class="mini-copy" style="margin:3px 0 8px">用已有信息获得更贴合你的岗位比较与建议。</div>
+            <div class="first-step"><span class="step-num">1</span><div><b>填写专业和年级</b><small>让建议更符合你的学习阶段</small></div></div>
+            <div class="first-step"><span class="step-num">2</span><div><b>记录接触过的技能与项目</b><small>不确定熟练度也可以先写下来</small></div></div>
+            <div class="first-step"><span class="step-num">3</span><div><b>选择每周准备时间</b><small>只算求职准备，不含上课和课程作业</small></div></div>
+            <span class="mini-button">开始填写个人画像</span><span class="mini-muted">约 2 分钟</span>
+          </section>
+          <div class="return-banner">再次打开时，会回到<strong>今日概览</strong>，接着完成上次的探索。</div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-choice" data-choice="首次先填画像" onclick="toggleSelect(this)">
+    <div class="flow-caption"><span class="letter" style="background:#bc6749">A2</span><div><b>首次先填画像</b><small>第一次打开直接填写资料；之后启动进入工作台</small></div></div>
+    <div class="mini-window">
+      <div class="mini-head"><div class="mini-brand">向前<i>·</i>职业规划</div><div class="mini-user">第 1 步 / 4</div></div>
+      <div class="mini-layout">
+        <aside class="mini-nav"><div class="mini-nav-title">探索流程</div><div class="mini-nav-item active">01　个人画像</div><div class="mini-nav-item">02　岗位探索</div><div class="mini-nav-item">03　职业分析</div><div class="mini-nav-item">04　行动计划</div></aside>
+        <main class="mini-main">
+          <div class="mini-eyebrow">第一步 · 个人画像</div><div class="mini-title">先从你已经知道的情况开始。</div><div class="mini-copy">空白项可以之后再补，不需要判断自己“够不够好”。</div>
+          <section class="profile-form">
+            <div class="form-row"><div><label class="form-label">年级</label><div class="form-input">大三　⌄</div></div><div><label class="form-label">专业</label><div class="form-input">软件工程</div></div></div>
+            <label class="form-label">接触过的技术</label><div class="skill-chips"><span class="skill">Java</span><span class="skill">Python</span><span class="skill">MySQL</span><span class="skill off">Git　+</span><span class="skill off">其他　+</span></div>
+            <label class="form-label">课程项目或实习经历</label><div class="form-input" style="height:41px">简单写做过什么、用过什么技术……</div>
+            <div class="form-row"><div><label class="form-label">意向城市（选填）</label><div class="form-input">可之后补充</div></div><div><label class="form-label">每周准备时间</label><div class="form-input">5 小时　−　+</div></div></div>
+            <div class="helper">职业探索和求职准备时间，不含上课和课程作业。</div>
+            <span class="mini-button">保存并比较岗位</span>
+          </section>
+          <div class="footer-note">保存画像后进入工作台；下次打开会回到今日概览。</div>
+        </main>
+      </div>
+    </div>
+  </div>
+</div>

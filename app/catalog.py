@@ -1,0 +1,90 @@
+JOBS = [
+    {
+        "id": "backend",
+        "name": "后端开发",
+        "english": "BACKEND ENGINEER",
+        "summary": "构建支撑产品运行的服务、接口和数据逻辑。",
+        "daily_work": ["设计和实现业务接口", "处理数据库读写与服务逻辑", "定位线上问题并保障稳定性"],
+        "skills": ["Java / Python", "SQL 与数据库", "HTTP / REST API", "Git 与 Linux"],
+        "starter_task": {
+            "title": "设计一个课程项目接口",
+            "description": "为课程项目写出一个创建任务的接口草案：列出请求字段、成功响应和两种错误情况。",
+            "duration": "约 30 分钟",
+        },
+    },
+    {
+        "id": "frontend",
+        "name": "前端开发",
+        "english": "FRONTEND ENGINEER",
+        "summary": "把产品需求转化为清晰、可交互的网页体验。",
+        "daily_work": ["实现网页布局与交互", "连接后端接口并展示数据", "处理不同屏幕尺寸和使用状态"],
+        "skills": ["HTML / CSS", "JavaScript / TypeScript", "Vue / React", "接口调用与浏览器调试"],
+        "starter_task": {
+            "title": "制作岗位信息小页面",
+            "description": "用纸笔、HTML 或任意熟悉工具，设计一个岗位介绍页面，包含岗位职责、技能清单和一个交互按钮。",
+            "duration": "约 30 分钟",
+        },
+    },
+    {
+        "id": "testing",
+        "name": "测试开发",
+        "english": "TEST DEVELOPMENT ENGINEER",
+        "summary": "通过测试设计和自动化工具提升软件质量。",
+        "daily_work": ["分析需求并设计测试场景", "编写接口或 UI 自动化脚本", "复现问题并推动缺陷修复"],
+        "skills": ["测试方法与用例设计", "Python / Java", "API 测试", "SQL 与 Linux 基础"],
+        "starter_task": {
+            "title": "为接口设计测试场景",
+            "description": "针对一个登录接口，列出正常登录、密码错误、字段为空和连续提交等测试场景。",
+            "duration": "约 30 分钟",
+        },
+    },
+]
+
+JOB_BY_ID = {job["id"]: job for job in JOBS}
+
+SAMPLE_DOCS = [
+    {
+        "id": "sample-backend-1",
+        "title": "后端开发岗位能力要求（示例资料）",
+        "job_category": "backend",
+        "document_type": "job_skill",
+        "content": "后端开发岗位通常涉及服务端接口、业务逻辑、数据库读写和服务维护。学生可以通过完成一个有清晰接口、数据表和基本测试的项目展示实践能力。不同企业和岗位的具体要求会有差异。",
+        "source_name": "团队示例内容",
+        "source_url": "",
+        "updated_at": "2026-09-30",
+        "is_placeholder": True,
+    },
+    {
+        "id": "sample-frontend-1",
+        "title": "前端开发岗位能力要求（示例资料）",
+        "job_category": "frontend",
+        "document_type": "job_skill",
+        "content": "前端开发岗位通常涉及网页结构、样式、交互和后端接口接入。学生可以通过一个完整的小页面展示布局、状态处理和交互实现。不同企业和岗位的具体要求会有差异。",
+        "source_name": "团队示例内容",
+        "source_url": "",
+        "updated_at": "2026-09-30",
+        "is_placeholder": True,
+    },
+    {
+        "id": "sample-testing-1",
+        "title": "测试开发岗位能力要求（示例资料）",
+        "job_category": "testing",
+        "document_type": "job_skill",
+        "content": "测试开发岗位通常涉及需求分析、测试场景设计、接口验证和自动化。学生可以通过清晰的测试用例、脚本和缺陷复现说明展示实践能力。不同企业和岗位的具体要求会有差异。",
+        "source_name": "团队示例内容",
+        "source_url": "",
+        "updated_at": "2026-09-30",
+        "is_placeholder": True,
+    },
+    {
+        "id": "sample-career-1",
+        "title": "大三学生校招准备建议（示例资料）",
+        "job_category": "all",
+        "document_type": "preparation",
+        "content": "职业准备可以从了解岗位、梳理课程项目、补充基础技能和练习表达项目经历开始。具体招聘时间和企业流程需要以官方招聘页面的最新信息为准。",
+        "source_name": "团队示例内容",
+        "source_url": "",
+        "updated_at": "2026-09-30",
+        "is_placeholder": True,
+    },
+]

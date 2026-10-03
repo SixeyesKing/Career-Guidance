@@ -1,0 +1,83 @@
+<style>
+  .role-intro { margin-bottom:1rem; }
+  .role-intro p { color:var(--text-secondary); margin-top:.3rem; }
+  .role-app { display:grid; grid-template-columns:140px minmax(0,1fr); border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#fff; min-height:600px; color:#1b2925; font:11px/1.45 system-ui,sans-serif; }
+  .r-nav { background:#fbfcfb; border-right:1px solid #e3e9e6; padding:15px 8px; }
+  .r-logo { color:#17564d; font-weight:760; font-size:11px; margin:2px 7px 23px; }
+  .r-logo i { color:#e67c58; font-style:normal; }
+  .r-navlabel { color:#91a099; font-size:7px; letter-spacing:.08em; margin:0 7px 8px; }
+  .r-navitem { padding:7px; margin:3px 0; border-radius:4px; color:#66766f; font-size:8px; }
+  .r-navitem.active { background:#eaf3ef; color:#185c51; font-weight:700; }
+  .r-main { padding:17px 20px 14px; min-width:0; }
+  .r-head { display:flex; justify-content:space-between; align-items:flex-end; gap:10px; }
+  .r-eyebrow { font-size:7px; color:#8b9992; letter-spacing:.08em; }
+  .r-title { font-size:17px; line-height:1.2; font-weight:740; margin:3px 0; }
+  .r-desc { color:#75827c; font-size:8px; }
+  .profile-context { border:1px solid #e0e9e4; background:#f6faf8; border-radius:5px; padding:6px 8px; color:#53685e; font-size:7px; white-space:nowrap; }
+  .role-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:13px; }
+  .role-card { border:1px solid #e1e8e4; border-radius:6px; background:white; overflow:hidden; }
+  .role-card.active { border:2px solid #398474; }
+  .role-card-head { padding:9px 9px 7px; border-bottom:1px solid #edf1ef; }
+  .role-en { font-size:6px; color:#8c9993; letter-spacing:.07em; }
+  .role-name { font-size:11px; font-weight:740; margin:2px 0 1px; }
+  .role-summary { color:#77857f; font-size:7px; min-height:20px; }
+  .role-card-body { padding:8px 9px 9px; }
+  .role-field { margin-bottom:7px; }
+  .role-field b { display:block; color:#62736c; font-size:7px; margin-bottom:3px; }
+  .role-field p { color:#465851; font-size:7.2px; margin:0; line-height:1.5; }
+  .skill-tags { display:flex; flex-wrap:wrap; gap:3px; }
+  .skill-tag { border-radius:10px; background:#edf4f1; padding:2px 5px; color:#3b786a; font-size:6.5px; }
+  .skill-tag.alt { background:#f7eee8; color:#a55b3d; }
+  .match-note { padding:6px; margin-top:5px; background:#f7f9f8; border-radius:4px; color:#6d7b75; font-size:6.8px; line-height:1.45; }
+  .role-select { margin-top:7px; border:1px solid #d8e2dd; border-radius:4px; text-align:center; padding:5px; color:#49645a; font-weight:650; font-size:7px; }
+  .role-card.active .role-select { background:#1e6a5e; color:white; border-color:#1e6a5e; }
+  .experience { display:grid; grid-template-columns:1.3fr .9fr; gap:12px; margin-top:13px; padding:10px 12px; border-top:1px solid #e7ece9; border-bottom:1px solid #e7ece9; }
+  .exp-kicker { color:#b16646; font-size:7px; font-weight:740; letter-spacing:.07em; }
+  .exp-title { font-size:9px; font-weight:720; margin:2px 0; }
+  .exp-copy { color:#75827c; font-size:7px; }
+  .exp-task { border-left:2px solid #e3a077; padding-left:9px; }
+  .exp-task b { display:block; font-size:7.5px; margin-bottom:2px; }
+  .exp-task span { color:#78857f; font-size:6.8px; }
+  .exp-actions { display:flex; gap:6px; margin-top:6px; }
+  .exp-start { background:#f4e5dc; color:#9b5134; border-radius:4px; padding:4px 7px; font-size:6.8px; font-weight:700; }
+  .exp-skip { color:#65776e; padding:4px 3px; font-size:6.8px; }
+  .source-note { margin-top:8px; display:flex; justify-content:space-between; gap:10px; color:#89958f; font-size:6.7px; }
+  .source-note b { color:#a66343; font-weight:650; }
+  .continue-bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top:10px; }
+  .chosen { color:#62736c; font-size:7.5px; }
+  .chosen b { color:#245f54; }
+  .continue-btn { background:#1e6a5e; color:white; border-radius:4px; padding:7px 10px; font-size:7px; font-weight:700; }
+  @media(max-width:850px) { .role-app{grid-template-columns:86px minmax(0,1fr)} .r-nav{padding:10px 4px}.r-navitem{padding:6px 4px;font-size:7px}.r-main{padding:13px 9px}.role-grid{grid-template-columns:1fr}.experience{grid-template-columns:1fr}.profile-context{display:none} }
+</style>
+
+<div class="role-intro">
+  <h2>岗位探索：并排比较，再决定是否体验</h2>
+  <p>不做百分比分数；先看常见工作、能力要求，以及画像中已经提到和仍待了解的信息。</p>
+</div>
+
+<div class="role-app">
+  <aside class="r-nav"><div class="r-logo">向前<i>·</i>职业规划</div><div class="r-navlabel">工作空间</div><div class="r-navitem">⌂　今日概览</div><div class="r-navitem">◉　个人画像</div><div class="r-navitem active">◇　岗位探索</div><div class="r-navitem">▤　职业分析</div><div class="r-navitem">✓　行动计划</div></aside>
+  <main class="r-main">
+    <div class="r-head"><div><div class="r-eyebrow">02 / EXPLORE</div><div class="r-title">看看不同方向的日常工作</div><div class="r-desc">演示能力条目；真实资料补齐后会显示来源和更新时间。</div></div><div class="profile-context">画像中提到：Java · Python · MySQL</div></div>
+    <div class="role-grid">
+      <section class="role-card active">
+        <div class="role-card-head"><div class="role-en">BACKEND ENGINEER</div><div class="role-name">后端开发</div><div class="role-summary">实现服务接口、业务逻辑和数据处理。</div></div>
+        <div class="role-card-body"><div class="role-field"><b>常见工作</b><p>设计接口、处理数据库读写、排查服务问题。</p></div><div class="role-field"><b>常见能力</b><div class="skill-tags"><span class="skill-tag">Java / Python</span><span class="skill-tag">SQL</span><span class="skill-tag">HTTP API</span><span class="skill-tag alt">Linux / Git</span></div></div><div class="match-note"><b>画像对照</b><br>已提及 Java、MySQL；项目实践深度还待了解。</div><div class="role-select">✓　当前选择</div></div>
+      </section>
+      <section class="role-card">
+        <div class="role-card-head"><div class="role-en">FRONTEND ENGINEER</div><div class="role-name">前端开发</div><div class="role-summary">把产品需求变成清晰、可交互的网页。</div></div>
+        <div class="role-card-body"><div class="role-field"><b>常见工作</b><p>实现页面布局和交互、连接后端接口、处理页面状态。</p></div><div class="role-field"><b>常见能力</b><div class="skill-tags"><span class="skill-tag">HTML / CSS</span><span class="skill-tag">JavaScript</span><span class="skill-tag">Vue / React</span><span class="skill-tag alt">浏览器调试</span></div></div><div class="match-note"><b>画像对照</b><br>当前信息不足；可补充前端课程或项目经历。</div><div class="role-select">选择这个方向</div></div>
+      </section>
+      <section class="role-card">
+        <div class="role-card-head"><div class="role-en">TEST DEVELOPMENT</div><div class="role-name">测试开发</div><div class="role-summary">设计测试并用工具提升软件质量。</div></div>
+        <div class="role-card-body"><div class="role-field"><b>常见工作</b><p>分析需求、设计用例、编写自动化脚本和复现缺陷。</p></div><div class="role-field"><b>常见能力</b><div class="skill-tags"><span class="skill-tag">测试设计</span><span class="skill-tag">Python / Java</span><span class="skill-tag">API 测试</span><span class="skill-tag alt">SQL</span></div></div><div class="match-note"><b>画像对照</b><br>已提及 Python；测试实践还待了解。</div><div class="role-select">选择这个方向</div></div>
+      </section>
+    </div>
+    <section class="experience">
+      <div><div class="exp-kicker">可选 · 不影响继续</div><div class="exp-title">想先试一个小任务，再决定方向吗？</div><div class="exp-copy">体验只帮助你感受工作内容，不作为能力测评；也可以直接跳过。</div></div>
+      <div class="exp-task"><b>后端体验：为一个课程任务接口写请求和响应草案</b><span>约 30 分钟 · 不需要接入真实岗位资料</span><div class="exp-actions"><span class="exp-start">开始体验</span><span class="exp-skip">暂不体验，直接继续</span></div></div>
+    </section>
+    <div class="source-note"><span><b>资料状态：示例内容</b>　不代表具体企业招聘要求</span><span>资料来源与更新时间　待真实资料接入后显示</span></div>
+    <div class="continue-bar"><div class="chosen">当前选择：<b>后端开发</b>　·　可以随时切换</div><span class="continue-btn">继续做职业分析　→</span></div>
+  </main>
+</div>

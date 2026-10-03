@@ -1,0 +1,65 @@
+<style>
+  .plan-intro { margin-bottom:1rem; }
+  .plan-intro p { color:var(--text-secondary); margin-top:.3rem; }
+  .plan-app { display:grid; grid-template-columns:140px minmax(0,1fr); border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#fff; min-height:680px; color:#1b2925; font:11px/1.45 system-ui,sans-serif; }
+  .p-nav { background:#fbfcfb; border-right:1px solid #e3e9e6; padding:15px 8px; }
+  .p-logo { color:#17564d; font-weight:760; font-size:11px; margin:2px 7px 23px; }
+  .p-logo i { color:#e67c58; font-style:normal; }
+  .p-navlabel { color:#91a099; font-size:7px; letter-spacing:.08em; margin:0 7px 8px; }
+  .p-navitem { padding:7px; margin:3px 0; border-radius:4px; color:#66766f; font-size:8px; }
+  .p-navitem.active { background:#eaf3ef; color:#185c51; font-weight:700; }
+  .p-main { padding:17px 20px; min-width:0; }
+  .p-header { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .p-eyebrow { color:#8b9992; font-size:7px; letter-spacing:.08em; }
+  .p-title { font-size:17px; font-weight:740; line-height:1.2; margin:3px 0; }
+  .p-sub { color:#75827c; font-size:8px; }
+  .p-actions { display:flex; gap:6px; white-space:nowrap; }
+  .p-select { border:1px solid #dfe7e3; background:#fff; border-radius:4px; padding:6px 7px; color:#42564d; font-size:7px; }
+  .p-export { background:#1e6a5e; color:#fff; border-radius:4px; padding:7px 9px; font-size:7px; font-weight:700; }
+  .p-budget { display:grid; grid-template-columns:180px minmax(0,1fr) auto; align-items:center; gap:12px; margin:12px 0 13px; padding:9px 10px; background:#f3f7f5; border-radius:5px; }
+  .budget-label { color:#74827c; font-size:7px; }
+  .budget-num { color:#245e53; font-size:11px; font-weight:750; }
+  .budget-help { color:#718078; font-size:7px; }
+  .budget-edit { color:#3e7d6d; font-size:7px; }
+  .p-status { display:flex; justify-content:space-between; align-items:center; margin:0 0 7px; color:#77847e; font-size:7px; }
+  .p-status strong { color:#a05f40; font-weight:650; }
+  .weeks { display:grid; gap:7px; }
+  .week { display:grid; grid-template-columns:113px minmax(0,1fr) 110px; gap:10px; align-items:start; border-top:1px solid #e9eeeb; padding:9px 8px; }
+  .week:first-child { border-top:1px solid #e0e8e4; }
+  .week-label { color:#8a9791; font-size:7px; letter-spacing:.07em; }
+  .week-title { font-size:9px; font-weight:720; color:#30443b; margin-top:2px; }
+  .week-task b { display:block; color:#394d44; font-size:7.5px; }
+  .week-task p { margin:2px 0 3px; color:#75817b; font-size:7px; }
+  .criteria { color:#55766a; font-size:6.7px; }
+  .week-time { text-align:right; }
+  .time-total { color:#385d51; font-weight:700; font-size:7.5px; }
+  .time-track { height:4px; border-radius:5px; background:#e8eeeb; margin-top:5px; overflow:hidden; }
+  .time-fill { height:100%; background:#d79663; border-radius:5px; }
+  .time-caption { color:#8a9690; font-size:6px; margin-top:3px; }
+  .plan-source { display:flex; justify-content:space-between; gap:10px; margin-top:10px; padding:8px 9px; border:1px solid #e5ebe8; border-radius:5px; color:#64756c; font-size:7px; }
+  .plan-source strong { color:#a15d3f; font-weight:650; }
+  .plan-foot { margin-top:10px; padding-top:8px; border-top:1px solid #e9eeeb; display:flex; justify-content:space-between; gap:8px; color:#87928d; font-size:6.7px; }
+  @media(max-width:760px) { .plan-app{grid-template-columns:82px minmax(0,1fr)}.p-nav{padding:10px 4px}.p-navitem{padding:6px 4px;font-size:7px}.p-main{padding:12px 9px}.p-header{display:block}.p-actions{margin-top:7px}.p-budget{grid-template-columns:1fr auto}.budget-help{grid-column:1 / -1;grid-row:2}.week{grid-template-columns:75px minmax(0,1fr);gap:6px}.week-time{grid-column:2;text-align:left;display:flex;align-items:center;gap:8px}.time-track{width:70px;margin:0}.plan-source{display:block}.plan-source span{display:block;margin-top:3px} }
+</style>
+
+<div class="plan-intro">
+  <h2>行动计划：四周安排清楚，但不过载</h2>
+  <p>每项任务都连到当前分析，带预计用时和完成标准；周任务总时长不超过用户设置的准备时间。</p>
+</div>
+
+<div class="plan-app">
+  <aside class="p-nav"><div class="p-logo">向前<i>·</i>职业规划</div><div class="p-navlabel">工作空间</div><div class="p-navitem">⌂　今日概览</div><div class="p-navitem">◉　个人画像</div><div class="p-navitem">◇　岗位探索</div><div class="p-navitem">▤　职业分析</div><div class="p-navitem active">✓　行动计划</div></aside>
+  <main class="p-main">
+    <div class="p-header"><div><div class="p-eyebrow">04 / PLAN</div><div class="p-title">后端开发 · 四周准备计划</div><div class="p-sub">根据你的职业分析生成；可以调整目标后重新生成。</div></div><div class="p-actions"><span class="p-select">目标岗位：后端开发　⌄</span><span class="p-export">下载 Markdown</span></div></div>
+    <div class="p-budget"><div><div class="budget-label">每周可投入准备时间</div><div class="budget-num">5 小时 / 周</div></div><div class="budget-help">指职业探索和求职准备时间，不包含上课与课程作业。计划会按这个时间控制任务量。</div><span class="budget-edit">修改画像 →</span></div>
+    <div class="p-status"><span>计划内容　·　示例计划，仅用于界面讨论</span><strong>资料依据包含示例内容</strong></div>
+    <div class="weeks">
+      <section class="week"><div><div class="week-label">WEEK 01</div><div class="week-title">梳理项目经验</div></div><div class="week-task"><b>整理你亲自负责的接口和数据表</b><p>回顾当前项目，记录需求、实现方式和遇到的问题。</p><div class="criteria">完成标准：形成 3 条项目记录，注明自己负责的部分。</div></div><div class="week-time"><div class="time-total">2 / 5 小时</div><div class="time-track"><div class="time-fill" style="width:40%"></div></div><div class="time-caption">本周预计投入</div></div></section>
+      <section class="week"><div><div class="week-label">WEEK 02</div><div class="week-title">补一个可展示功能</div></div><div class="week-task"><b>完善一个后端接口的异常处理</b><p>为缺少字段、无效数据等情况补充清晰的错误响应。</p><div class="criteria">完成标准：至少覆盖 3 种错误输入并记录运行结果。</div></div><div class="week-time"><div class="time-total">3.5 / 5 小时</div><div class="time-track"><div class="time-fill" style="width:70%"></div></div><div class="time-caption">本周预计投入</div></div></section>
+      <section class="week"><div><div class="week-label">WEEK 03</div><div class="week-title">验证接口行为</div></div><div class="week-task"><b>为核心接口补充测试用例</b><p>检查正常输入、错误输入和边界情况。</p><div class="criteria">完成标准：留下可重复执行的用例和结果。</div></div><div class="week-time"><div class="time-total">3 / 5 小时</div><div class="time-track"><div class="time-fill" style="width:60%"></div></div><div class="time-caption">本周预计投入</div></div></section>
+      <section class="week"><div><div class="week-label">WEEK 04</div><div class="week-title">整理与表达</div></div><div class="week-task"><b>准备一段项目介绍并进行自我练习</b><p>讲清项目目标、个人工作、一次技术选择和结果。</p><div class="criteria">完成标准：形成 2 分钟介绍，列出 3 个待改进点。</div></div><div class="week-time"><div class="time-total">2.5 / 5 小时</div><div class="time-track"><div class="time-fill" style="width:50%"></div></div><div class="time-caption">本周预计投入</div></div></section>
+    </div>
+    <div class="plan-source"><div><strong>计划依据：职业分析中的待确认项</strong><br>岗位资料：示例资料，仅用于界面讨论</div><span>真实资料接入后显示来源标题、链接和更新时间。</span></div>
+    <div class="plan-foot"><span>每周用时会逐周校验；超出预算时需要减少任务或调整预计时间。</span><span>重新生成会另存一份新计划，旧计划仍可查看。</span></div>
+  </main>
+</div>

@@ -1,0 +1,131 @@
+<style>
+  .compare-title { margin-bottom: 1.25rem; }
+  .compare-title p { color: var(--text-secondary); margin-top: .35rem; }
+  .design-picks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .design-pick { overflow: hidden; border: 2px solid var(--border); border-radius: 8px; background: var(--bg-secondary); cursor: pointer; }
+  .design-pick:hover { border-color: var(--accent); }
+  .design-pick.selected { border-color: var(--selected-border); }
+  .pick-label { display: flex; align-items: center; gap: .65rem; padding: .7rem .85rem; border-bottom: 1px solid var(--border); }
+  .pick-letter { display: grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 5px; background: #174c46; color: white; font-weight: 700; font-size: .8rem; }
+  .pick-label strong { font-size: .92rem; }
+  .pick-label small { display: block; color: var(--text-secondary); font-size: .72rem; }
+  .app-preview { min-height: 575px; background: #f8faf9; color: #172522; font-family: system-ui, sans-serif; font-size: 11px; }
+  .app-top { height: 42px; padding: 0 13px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid #e3e9e6; background: #fff; }
+  .brand { font-weight: 750; font-size: 12px; color:#164f47; }
+  .brand span { color:#ef7756; }
+  .top-user { color:#596a65; }
+  .workspace { display:grid; grid-template-columns: 118px minmax(0, 1fr); min-height: 533px; }
+  .side { border-right: 1px solid #e3e9e6; background:#fff; padding: 13px 8px; }
+  .side-cap { color:#97a39f; font-size:8px; letter-spacing:.08em; margin: 4px 7px 10px; }
+  .nav-item { padding: 8px 8px; margin-bottom: 3px; border-radius:5px; color:#596a65; }
+  .nav-item.active { background:#e5f1ed; color:#14564c; font-weight:700; }
+  .nav-mark { display:inline-block; width:15px; color:#6c8b82; }
+  .profile-mini { margin: 23px 5px 0; padding-top:12px; border-top:1px solid #edf0ee; color:#7a8883; line-height:1.65; }
+  .main-a { padding: 17px 17px 20px; }
+  .eyebrow-a { color:#8a9993; font-size:8px; letter-spacing:.08em; }
+  .headline-a { margin:4px 0 3px; font-size:18px; line-height:1.2; font-weight:730; color:#172522; }
+  .sub-a { color:#75827d; font-size:9px; }
+  .row-a { display:grid; grid-template-columns: 1.4fr .9fr; gap:9px; margin-top:14px; }
+  .panel-a { background:#fff; border:1px solid #e5ebe8; border-radius:6px; padding:12px; }
+  .panel-title { display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:10px; margin-bottom:9px; }
+  .tiny-link { color:#1f7366; font-weight:600; font-size:8px; }
+  .next-box { background:#edf5f1; border-left:3px solid #378a75; padding:9px; border-radius:3px; }
+  .next-box b { display:block; font-size:10px; margin-bottom:4px; }
+  .next-box p { color:#60716a; font-size:8px; line-height:1.45; margin:0; }
+  .button-a { display:inline-block; margin-top:8px; padding:6px 9px; background:#1e6a5e; color:#fff; border-radius:4px; font-weight:650; font-size:8px; }
+  .progress-a { margin-top:10px; display:flex; align-items:center; gap:7px; color:#64736d; font-size:8px; }
+  .track { flex:1; height:5px; border-radius:6px; background:#e8eeeb; overflow:hidden; }
+  .fill { height:100%; width:42%; background:#e68b53; }
+  .time-value { font-size:16px; font-weight:740; margin:7px 0 2px; }
+  .helper-a { color:#7b8984; font-size:8px; line-height:1.5; }
+  .task-list { margin-top:12px; }
+  .task-row { display:flex; gap:8px; padding:8px 0; border-top:1px solid #edf0ee; align-items:flex-start; }
+  .task-dot { width:10px; height:10px; margin-top:2px; border:1.3px solid #91a39b; border-radius:50%; flex:0 0 auto; }
+  .task-row b { display:block; font-size:8.5px; }
+  .task-row small { color:#7c8984; font-size:7.5px; }
+  .job-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:9px; }
+  .job-chip { border:1px solid #e3e9e6; background:#fff; border-radius:5px; padding:7px; }
+  .job-chip b { display:block; font-size:8px; }
+  .job-chip span { color:#83918b; font-size:7px; }
+  .main-b { padding:18px 16px 20px; }
+  .welcome-b { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+  .welcome-b h3 { font-size:16px; line-height:1.25; margin:3px 0; }
+  .welcome-b p { color:#75827d; font-size:8.5px; margin:0; }
+  .badge-b { background:#fce9df; color:#a84f37; border-radius:20px; padding:5px 8px; font-size:7px; white-space:nowrap; }
+  .steps-b { margin:15px 0 16px; display:grid; grid-template-columns:repeat(4,1fr); position:relative; }
+  .steps-b:before { content:''; position:absolute; height:2px; top:9px; left:13%; right:13%; background:#dde5e1; }
+  .step-b { position:relative; text-align:center; color:#87948f; font-size:7px; }
+  .step-circle { margin:0 auto 5px; display:grid; place-items:center; width:19px; height:19px; border-radius:50%; border:1px solid #cbd6d1; background:#f8faf9; position:relative; z-index:1; }
+  .step-b.done { color:#347b6c; }
+  .step-b.done .step-circle { background:#347b6c; color:white; border-color:#347b6c; }
+  .step-b.current { color:#a85237; font-weight:700; }
+  .step-b.current .step-circle { background:#ed815f; color:white; border-color:#ed815f; }
+  .focus-b { background:#fff; border:1px solid #e3e9e6; border-radius:7px; padding:13px; }
+  .focus-top { display:flex; justify-content:space-between; align-items:center; }
+  .focus-tag { color:#387a6d; font-size:7px; font-weight:750; letter-spacing:.06em; }
+  .focus-b h4 { margin:7px 0 4px; font-size:12px; }
+  .focus-b p { margin:0; color:#6d7b75; font-size:8px; line-height:1.5; }
+  .focus-action { margin-top:10px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .button-b { display:inline-block; padding:7px 10px; color:#fff; background:#235f55; border-radius:4px; font-size:8px; font-weight:650; }
+  .text-action { color:#76847e; font-size:7.5px; }
+  .journey-title { display:flex; justify-content:space-between; align-items:center; margin:14px 0 7px; font-weight:700; font-size:9px; }
+  .journey-b { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .journey-item { min-height:60px; background:#fff; border:1px solid #e6ebe8; border-radius:5px; padding:8px; }
+  .journey-item.active { border-color:#e5a36e; background:#fff8f2; }
+  .journey-num { color:#d17a49; font-weight:750; font-size:7px; }
+  .journey-item b { display:block; margin:3px 0; font-size:8px; }
+  .journey-item small { color:#7b8983; font-size:7px; }
+  .note-b { margin-top:9px; padding:8px; color:#64736d; background:#edf4f1; border-radius:5px; font-size:7.5px; line-height:1.45; }
+  .note-b strong { color:#286356; }
+  @media (max-width: 950px) { .design-picks { grid-template-columns:1fr; } .app-preview { min-height:unset; } }
+  @media (max-width: 540px) { .workspace { grid-template-columns:78px minmax(0,1fr); } .side { padding:10px 4px; } .nav-item { padding:7px 4px; font-size:8px; } .nav-mark { width:12px; } .main-a,.main-b { padding:12px 9px; } .row-a { grid-template-columns:1fr; } }
+</style>
+
+<div class="compare-title">
+  <h2>职业规划助手：首页方向对比</h2>
+  <p>两个方案都保留四个核心页面。请先看哪一种更像你愿意日常打开使用的产品，也可以点击卡片标记选择。</p>
+</div>
+
+<div class="design-picks">
+  <div class="design-pick" data-choice="A-日常工作台" onclick="toggleSelect(this)">
+    <div class="pick-label"><span class="pick-letter">A</span><div><strong>日常工作台</strong><small>以近期任务和进度为中心，适合持续使用</small></div></div>
+    <div class="app-preview">
+      <div class="app-top"><div class="brand">向前<span>·</span>职业规划</div><div class="top-user">大三 · 软件工程　⌄</div></div>
+      <div class="workspace">
+        <aside class="side">
+          <div class="side-cap">工作空间</div>
+          <div class="nav-item active"><span class="nav-mark">⌂</span>今日概览</div>
+          <div class="nav-item"><span class="nav-mark">◉</span>个人画像</div>
+          <div class="nav-item"><span class="nav-mark">◇</span>岗位探索</div>
+          <div class="nav-item"><span class="nav-mark">▤</span>职业分析</div>
+          <div class="nav-item"><span class="nav-mark">✓</span>行动计划</div>
+          <div class="profile-mini">当前方向<br><b>后端开发</b><br>上次更新：今天</div>
+        </aside>
+        <main class="main-a">
+          <div class="eyebrow-a">你的求职准备空间</div>
+          <div class="headline-a">下午好，先走好下一步。</div>
+          <div class="sub-a">准备过程可以分几次完成，进度会保存在本地。</div>
+          <div class="row-a">
+            <section class="panel-a">
+              <div class="panel-title"><span>继续上次的探索</span><span class="tiny-link">查看分析 →</span></div>
+              <div class="next-box"><b>后端开发 · 职业分析</b><p>你已经梳理了现有技能。接下来可以确认项目实践深度，再把待补能力整理成任务。</p><span class="button-a">继续职业分析</span></div>
+              <div class="progress-a"><span>整体进度</span><div class="track"><div class="fill"></div></div><b>2 / 4</b></div>
+            </section>
+            <section class="panel-a">
+              <div class="panel-title"><span>本周准备时间</span><span class="tiny-link">调整</span></div>
+              <div class="time-value">5 小时</div>
+              <div class="helper-a">只算职业探索与求职准备，不含上课和课程作业。</div>
+            </section>
+          </div>
+          <section class="panel-a task-list">
+            <div class="panel-title"><span>接下来可以做</span><span class="tiny-link">打开行动计划 →</span></div>
+            <div class="task-row"><span class="task-dot"></span><div><b>确认一个项目里的数据库设计经历</b><small>职业分析 · 约 10 分钟</small></div></div>
+            <div class="task-row"><span class="task-dot"></span><div><b>为后端方向生成四周准备计划</b><small>行动计划 · 按你的每周时间安排</small></div></div>
+          </section>
+          <div class="panel-title" style="margin:13px 0 6px"><span>正在了解的方向</span><span class="tiny-link">比较全部岗位 →</span></div>
+          <div class="job-strip"><div class="job-chip"><b>后端开发</b><span>当前选择</span></div><div class="job-chip"><b>前端开发</b><span>可继续探索</span></div><div class="job-chip"><b>测试开发</b><span>可继续探索</span></div></div>
+        </main>
+      </div>
+    </div>
+  </div>
+</div>
