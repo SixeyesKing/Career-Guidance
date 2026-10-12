@@ -30,7 +30,7 @@ class FakeAPI:
         if self.offline:
             raise requests.ConnectionError("isolated test")
         reads = {"/health": {"status": "ok"}, "/status": {"mode": "demo", "retrieval_mode": "keyword"}, "/profile": self.profile,
-                 "/jobs": JOBS, "/plans": self.plans, "/analyses": self.analyses, "/experience-feedback": self.feedback, "/conversations": self.chats}
+                 "/jobs": JOBS, "/visits": [], "/plans": self.plans, "/analyses": self.analyses, "/experience-feedback": self.feedback, "/conversations": self.chats}
         if method == "GET" and path in reads:
             data = reads[path]
         elif method == "GET" and path.endswith("/markdown"):
@@ -94,7 +94,7 @@ class WorkspaceTest(unittest.TestCase):
 
     def test_all_five_pages_with_empty_profile(self):
         self.run_app()
-        self.assertIn("建立一份简单的个人画像", self.text())
+        self.assertIn("未来的方向", self.text())
         for page in ["个人画像", "岗位探索", "职业分析", "行动计划", "今日概览"]:
             self.nav(page)
         self.assertFalse(any(method != "GET" for method, _, _ in self.api.calls))
@@ -130,6 +130,18 @@ class WorkspaceTest(unittest.TestCase):
         self.run_app()
         self.assertNotIn("backend 已知基础", self.text())
         self.assertEqual(len(self.at.chat_message), 0)
+
+    def test_custom_question_uses_visible_consultation_form(self):
+        self.run_app()
+        self.nav("职业分析")
+        self.at.text_area(key="consultation_question").set_value("我该如何准备第一个后端项目？")
+        self.button("发送问题").click()
+        self.run_app()
+        chat_calls = [body for method, path, body in self.api.calls if method == "POST" and path == "/chat"]
+        self.assertEqual(len(chat_calls), 1)
+        self.assertEqual(chat_calls[0]["question"], "我该如何准备第一个后端项目？")
+        self.assertEqual(chat_calls[0]["job_category"], "backend")
+        self.assertEqual(len(self.at.chat_message), 2)
 
     def test_feedback_start_complete_and_skip(self):
         self.run_app()
@@ -184,11 +196,11 @@ class WorkspaceTest(unittest.TestCase):
         self.run_app()
         self.assertIn("工作台正在等待连接", self.text())
         self.assertEqual(len(self.at.error), 0)
-        self.assertEqual(len(self.api.calls), 1)
+        self.assertEqual([(method, path) for method, path, _ in self.api.calls], [("GET", "/visits"), ("GET", "/health")])
         self.api.offline = False
         self.button("重新连接").click()
         self.run_app()
-        self.assertIn("建立一份简单的个人画像", self.text())
+        self.assertIn("未来的方向", self.text())
 
     def test_unsafe_source_urls_are_not_links(self):
         self.assertIsNone(safe_link("javascript:alert(1)"))

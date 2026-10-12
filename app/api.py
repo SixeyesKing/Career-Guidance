@@ -107,6 +107,11 @@ def jobs():
     return JOBS
 
 
+@app.get("/visits")
+def saved_visits():
+    return db.list_saved_visits()
+
+
 @app.get("/knowledge/status")
 def knowledge_status():
     collection = get_chroma_collection()

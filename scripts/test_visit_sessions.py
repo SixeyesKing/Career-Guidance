@@ -87,7 +87,35 @@ class VisitSessionsTest(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
         self.assertFalse((Path(self.temp.name) / "sessions").exists())
 
-    def test_browser_refresh_returns_to_welcome_without_resetting_current_visit(self):
+    def test_saved_visits_lists_only_records_with_content(self):
+        self.client.get("/profile", headers=self.headers("a"))
+        self.client.put("/profile", headers=self.headers("b"), json={"major": "软件工程"})
+        with db.session_database("c" * 32):
+            db.init_db()
+            db.save_analysis("frontend", {"known_basics": ["页面项目"]})
+        visits = self.client.get("/visits").json()
+        self.assertEqual({item["visit_id"] for item in visits}, {"b" * 32, "c" * 32})
+        self.assertEqual(next(item for item in visits if item["major"] == "软件工程")["major"], "软件工程")
+        self.assertEqual(next(item for item in visits if item["job_category"] == "frontend")["analysis_count"], 1)
+
+    def test_address_without_visit_opens_most_recent_saved_record(self):
+        self.client.put("/profile", headers=self.headers("a"), json={"major": "最近保存"})
+        def request(method, url, **kwargs):
+            kwargs.pop("timeout", None)
+            result = self.client.request(method, urlparse(url).path, **kwargs)
+            response = requests.Response()
+            response.status_code = result.status_code
+            response._content = result.content
+            response.encoding = "utf-8"
+            return response
+        with patch("requests.request", request), patch("app.api.get_chroma_collection", return_value=None):
+            at = AppTest.from_file("app/ui.py", default_timeout=25).run()
+            self.assertEqual(list(at.exception), [])
+            self.assertEqual(at.session_state["visit_id"], "a" * 32)
+            self.assertIn("最近保存", "\n".join(m.value for m in at.markdown))
+            self.assertEqual(at.query_params["visit"], ["a" * 32])
+
+    def test_browser_refresh_restores_saved_visit(self):
         def request(method, url, **kwargs):
             kwargs.pop("timeout", None)
             result = self.client.request(method, urlparse(url).path, **kwargs)
@@ -100,8 +128,9 @@ class VisitSessionsTest(unittest.TestCase):
         with patch("requests.request", request), patch("app.api.get_chroma_collection", return_value=None):
             at = AppTest.from_file("app/ui.py", default_timeout=25).run()
             self.assertEqual(list(at.exception), [])
-            self.assertIn("建立一份简单的个人画像", "\n".join(m.value for m in at.markdown))
+            self.assertIn("未来的方向", "\n".join(m.value for m in at.markdown))
             first_id = at.session_state["visit_id"]
+            self.assertEqual(at.query_params["visit"], [first_id])
             at.button(key="nav_个人画像").click().run()
             major = next(i for i in at.text_input if i.label == "专业")
             self.assertEqual(major.value, "")
@@ -110,16 +139,17 @@ class VisitSessionsTest(unittest.TestCase):
             at.button(key="nav_今日概览").click().run()
             self.assertIn("本次填写", "\n".join(m.value for m in at.markdown))
             self.assertEqual(at.session_state["visit_id"], first_id)
-            refreshed = AppTest.from_file("app/ui.py", default_timeout=25).run()
+            refreshed = AppTest.from_file("app/ui.py", default_timeout=25)
+            refreshed.query_params.update(at.query_params)
+            refreshed.run()
             self.assertEqual(list(refreshed.exception), [])
-            self.assertNotEqual(refreshed.session_state["visit_id"], first_id)
-            self.assertIn("建立一份简单的个人画像", "\n".join(m.value for m in refreshed.markdown))
-            self.assertNotIn("本次填写", "\n".join(m.value for m in refreshed.markdown))
+            self.assertEqual(refreshed.session_state["visit_id"], first_id)
+            self.assertIn("本次填写", "\n".join(m.value for m in refreshed.markdown))
             refreshed.button(key="nav_个人画像").click().run()
-            self.assertEqual(next(i for i in refreshed.text_input if i.label == "专业").value, "")
+            self.assertEqual(next(i for i in refreshed.text_input if i.label == "专业").value, "本次填写")
             self.assertEqual(db.get_profile()["major"], "之前的专业")
 
-    def test_welcome_button_enters_profile_and_restart_creates_new_visit(self):
+    def test_new_visit_is_blank_and_can_import_previous_record(self):
         def request(method, url, **kwargs):
             kwargs.pop("timeout", None)
             result = self.client.request(method, urlparse(url).path, **kwargs)
@@ -130,15 +160,22 @@ class VisitSessionsTest(unittest.TestCase):
             return response
         with patch("requests.request", request), patch("app.api.get_chroma_collection", return_value=None):
             at = AppTest.from_file("app/ui.py", default_timeout=25).run()
-            self.assertIn("建立一份简单的个人画像", "\n".join(m.value for m in at.markdown))
+            self.assertIn("未来的方向", "\n".join(m.value for m in at.markdown))
             first_id = at.session_state["visit_id"]
             at.button(key="overview_start_profile").click().run()
             self.assertIn("从你的故事开始", "\n".join(m.value for m in at.markdown))
             self.assertEqual(at.session_state["page_nav"], "个人画像")
-            at.button(key="restart_visit").click().run()
+            next(i for i in at.text_input if i.label == "专业").set_value("可恢复的专业")
+            next(i for i in at.button if i.label == "保存个人画像").click().run()
+            at.button(key="new_visit").click().run()
             self.assertNotEqual(at.session_state["visit_id"], first_id)
             self.assertEqual(at.session_state["page_nav"], "今日概览")
-            self.assertIn("建立一份简单的个人画像", "\n".join(m.value for m in at.markdown))
+            self.assertIn("未来的方向", "\n".join(m.value for m in at.markdown))
+            self.assertEqual(at.query_params["visit"], [at.session_state["visit_id"]])
+            at.button(key="import_visit").click().run()
+            self.assertEqual(at.session_state["visit_id"], first_id)
+            at.button(key="nav_个人画像").click().run()
+            self.assertEqual(next(i for i in at.text_input if i.label == "专业").value, "可恢复的专业")
 
 
 if __name__ == "__main__":

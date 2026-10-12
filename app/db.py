@@ -1,4 +1,5 @@
 import json
+import re
 import sqlite3
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -18,6 +19,56 @@ def session_database(session_id):
         yield
     finally:
         _session_path.reset(token)
+
+
+def list_saved_visits(limit=50):
+    """Summarize local visits with saved content without changing their databases."""
+    directory = DATABASE_PATH.parent / "sessions"
+    if not directory.exists():
+        return []
+    visits = []
+    for path in directory.glob("*.db"):
+        if not re.fullmatch(r"[0-9a-f]{32}", path.stem):
+            continue
+        try:
+            with sqlite3.connect(path.as_uri() + "?mode=ro", uri=True, timeout=2) as connection:
+                connection.row_factory = sqlite3.Row
+                profile = connection.execute(
+                    "SELECT grade, major, skills_json, experience_text, interest_json, target_city "
+                    "FROM profiles WHERE id=1"
+                ).fetchone()
+                if profile is None:
+                    continue
+                counts = {
+                    table: connection.execute("SELECT COUNT(*) FROM " + table).fetchone()[0]
+                    for table in ("analyses", "plans", "conversations", "experience_feedback")
+                }
+                has_profile = any(profile[field] for field in ("grade", "major", "experience_text", "target_city"))
+                has_profile = has_profile or bool(json_load(profile["skills_json"], []) or json_load(profile["interest_json"], []))
+                if not has_profile and not any(counts.values()):
+                    continue
+                latest = connection.execute(
+                    "SELECT job_category FROM ("
+                    "SELECT job_category, created_at FROM plans UNION ALL "
+                    "SELECT job_category, created_at FROM analyses UNION ALL "
+                    "SELECT job_category, created_at FROM conversations UNION ALL "
+                    "SELECT job_category, created_at FROM experience_feedback"
+                    ") ORDER BY created_at DESC LIMIT 1"
+                ).fetchone()
+            visits.append({
+                "visit_id": path.stem,
+                "grade": profile["grade"],
+                "major": profile["major"],
+                "job_category": latest["job_category"] if latest else "",
+                "updated_at": datetime.fromtimestamp(path.stat().st_mtime, timezone.utc).astimezone().isoformat(timespec="seconds"),
+                "analysis_count": counts["analyses"],
+                "plan_count": counts["plans"],
+                "conversation_count": counts["conversations"],
+            })
+        except (OSError, sqlite3.DatabaseError):
+            continue
+    visits.sort(key=lambda visit: visit["updated_at"], reverse=True)
+    return visits[:limit]
 
 
 def now_iso():

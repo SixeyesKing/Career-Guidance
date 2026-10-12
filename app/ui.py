@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 from uuid import uuid4
 
@@ -40,15 +41,37 @@ SKILL_CHECKS = {
     ],
 }
 
-st.set_page_config(page_title="向前 · 职业规划", page_icon=":material/near_me:", layout="wide", initial_sidebar_state="auto")
+st.set_page_config(page_title="向前 · 职业规划", page_icon=":material/near_me:", layout="wide", initial_sidebar_state="expanded")
 from app.ui_components import (
     load_theme, page_header, section_heading, empty_state, html,
     format_date, render_runtime_state, render_sources, render_resources,
 )
 load_theme()
 _read_cache = {}
-if "visit_id" not in st.session_state:
-    st.session_state["visit_id"] = uuid4().hex
+PAGES = ("今日概览", "个人画像", "岗位探索", "职业分析", "行动计划")
+url_visit = st.query_params.get("visit", "")
+if not url_visit:
+    try:
+        response = requests.request("GET", API_URL + "/visits", timeout=3)
+        response.raise_for_status()
+        recent = response.json()
+    except (requests.RequestException, ValueError):
+        recent = []
+    candidate = recent[0].get("visit_id", "") if isinstance(recent, list) and recent and isinstance(recent[0], dict) else ""
+    url_visit = candidate if re.fullmatch(r"[0-9a-f]{32}", candidate) else uuid4().hex
+    st.query_params["visit"] = url_visit
+elif not isinstance(url_visit, str) or not re.fullmatch(r"[0-9a-f]{32}", url_visit):
+    url_visit = uuid4().hex
+    st.query_params["visit"] = url_visit
+if st.session_state.get("visit_id") != url_visit:
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    st.session_state["visit_id"] = url_visit
+    url_page = st.query_params.get("page", "今日概览")
+    st.session_state["page_nav"] = url_page if url_page in PAGES else "今日概览"
+    url_job = st.query_params.get("job", "")
+    if url_job in (job["id"] for job in JOBS):
+        st.session_state["job_category"] = url_job
 
 
 def api(method, path, **kwargs):
@@ -85,21 +108,31 @@ def choose_job(job_id):
         st.session_state["chat_display"] = []
     st.session_state["job_category"] = job_id
     st.session_state["plan_job"] = job_id
+    st.query_params["job"] = job_id
     return changed
 
 
 def go_to(page):
+    st.query_params["page"] = page
     st.session_state["next_page"] = page
     st.rerun()
 
 
-def restart_visit():
-    """Start a clean local test run without deleting the previous run."""
+def activate_visit(visit_id):
+    """Switch the active local record without deleting saved visits."""
     for key in list(st.session_state.keys()):
         del st.session_state[key]
-    st.session_state["visit_id"] = uuid4().hex
+    st.session_state["visit_id"] = visit_id
     st.session_state["page_nav"] = "今日概览"
+    st.query_params["visit"] = visit_id
+    st.query_params["page"] = "今日概览"
+    if "job" in st.query_params:
+        del st.query_params["job"]
     st.rerun()
+
+
+def new_visit():
+    activate_visit(uuid4().hex)
 
 
 def overview_page():
@@ -108,16 +141,21 @@ def overview_page():
     conversations = api("GET", "/conversations") or []
     analyses = api("GET", "/analyses") or []
     state = select_dashboard_state(profile, plans, conversations, analyses)
-    page_header("YOUR CAREER SPACE / 工作台", "每一步，都更接近你的方向。", "从认识自己，到了解岗位，再把想法变成可以开始的行动。" if state["has_profile"] else "欢迎开始新的探索。这一次，从你现在的想法和经历出发。")
     if not state["has_profile"]:
-        st.markdown('<div class="welcome-kicker">你的求职准备空间</div>', unsafe_allow_html=True)
-        st.markdown('<section class="welcome-card"><div class="welcome-card-head"><h2>建立一份简单的个人画像</h2><p>用已有信息获得更贴合你的岗位比较与建议。</p></div><div class="welcome-step"><span>1</span><div><b>填写专业和年级</b><small>让建议更符合你的学习阶段</small></div></div><div class="welcome-step"><span>2</span><div><b>记录接触过的技能与项目</b><small>不确定熟练度也可以先写下来</small></div></div><div class="welcome-step"><span>3</span><div><b>选择每周准备时间</b><small>只算求职准备，不含上课和课程作业</small></div></div><div class="welcome-action"><span>约 2 分钟</span></div></section>', unsafe_allow_html=True)
-        if st.button("开始填写个人画像", key="overview_start_profile", type="primary", icon=":material/arrow_forward:"):
-            st.session_state["page_nav"] = "个人画像"
-            st.session_state["profile_started"] = True
-            st.rerun()
-        st.markdown('<div class="welcome-note">再次打开时，会回到欢迎入口。完成一次探索后，也可以从右上角重新开始。</div>', unsafe_allow_html=True)
+        with st.container(key="welcome_stage"):
+            intro, visual = st.columns([1.05, 1], gap="large", vertical_alignment="center")
+            with intro:
+                st.markdown('<div class="welcome-overline"><span class="welcome-spark">✦</span> 向前 / 职业探索工作台</div><h1 class="welcome-title">未来的方向，<br><em>从现在出发。</em></h1><p class="welcome-lead">把你学过的、做过的和感兴趣的事放在一起，慢慢找到值得投入的方向。</p>', unsafe_allow_html=True)
+                if st.button("开始填写个人画像", key="overview_start_profile", type="primary", icon=":material/arrow_forward:"):
+                    st.session_state["profile_started"] = True
+                    go_to("个人画像")
+                st.markdown('<div class="welcome-time">约 2 分钟，先写下你已经知道的部分。</div>', unsafe_allow_html=True)
+            with visual:
+                st.image(str(PROJECT_ROOT / "app" / "assets" / "career-journey.svg"), width="stretch")
+        section_heading("先认识现在的你", "从这里开始")
+        st.markdown('<div class="welcome-steps"><div class="welcome-step"><span>01</span><div><b>你的学习阶段</b><small>专业与年级</small></div></div><div class="welcome-step"><span>02</span><div><b>你做过的事</b><small>技能、课程与项目</small></div></div><div class="welcome-step"><span>03</span><div><b>你的准备节奏</b><small>每周可投入的时间</small></div></div></div>', unsafe_allow_html=True)
         return
+    page_header("YOUR CAREER SPACE / 工作台", "每一步，都更接近你的方向。", "从认识自己，到了解岗位，再把想法变成可以开始的行动。")
     action = state["next_action"]
     targets = {"profile": "个人画像", "explore": "岗位探索", "analysis": "职业分析", "plan": "行动计划"}
     titles = {"profile": "先从认识自己开始。", "explore": "让兴趣，遇见具体的工作。", "analysis": "接着上次的思考，继续向前。", "plan": "把下一步，落在行动里。"}
@@ -235,6 +273,37 @@ def opportunity_page():
         st.caption("画像中提到：" + " · ".join(profile["skills"]))
     else:
         st.caption("还没有填写技术经历也可以先比较；未填写的信息不会被当作能力不足。")
+    with st.container(key="experience_panel"):
+        details, controls = st.columns([2.2, 1], gap="large", vertical_alignment="center")
+        with controls:
+            task_job = st.selectbox("选择想体验的方向", [job["id"] for job in jobs], index=[job["id"] for job in jobs].index(selected) if selected in [job["id"] for job in jobs] else 0, format_func=job_name, key="experience_job")
+        task = JOB_BY_ID[task_job]["starter_task"]
+        with details:
+            st.markdown('<div class="experience-intro"><span>动手试试 · {0}</span><h2>想先试试看？</h2><p>先体验一个真实的小任务，再判断自己是否喜欢这个方向。可以跳过，不影响继续探索。</p><strong>{1}</strong><p>{2}</p></div>'.format(html(task["duration"]), html(task["title"]), html(task["description"])), unsafe_allow_html=True)
+        with controls:
+            if st.button("开始体验", key="start_" + task_job, type="primary", icon=":material/play_arrow:", use_container_width=True):
+                result = api("POST", "/experience-feedback", json={"job_category": task_job, "choice": "started", "task_status": "started"})
+                if result is not None:
+                    st.session_state["active_task"] = task_job
+            if st.button("暂不体验", key="skip_" + task_job, use_container_width=True):
+                if api("POST", "/experience-feedback", json={"job_category": task_job, "choice": "skipped", "task_status": "skipped"}) is not None:
+                    st.session_state.pop("active_task", None)
+                    st.success("已记录跳过。你可以直接选择方向继续分析。")
+        if st.session_state.get("active_task") == task_job:
+            with st.form("feedback_" + task_job):
+                task_status = st.radio("本次体验状态", ["started", "completed"], format_func=lambda value: "已开始，尚未完成" if value == "started" else "已完成", horizontal=True)
+                feedback_cols = st.columns(3)
+                interest = feedback_cols[0].slider("兴趣程度", 1, 5, 3)
+                difficulty = feedback_cols[1].slider("主观难度", 1, 5, 3, help="1 很轻松；3 有挑战但能完成；5 非常吃力。")
+                continued = feedback_cols[2].slider("继续意愿", 1, 5, 3)
+                st.caption("三个维度分别记录，不会合并为岗位分数。难度：1 很轻松，3 有挑战但能完成，5 非常吃力。")
+                note = st.text_input("体验感受（选填）")
+                save = st.form_submit_button("保存体验反馈", type="primary")
+            if save:
+                result = api("POST", "/experience-feedback", json={"job_category": task_job, "choice": "started", "task_status": task_status, "interest": interest, "difficulty": difficulty, "continue_interest": continued, "note": note})
+                if result is not None:
+                    st.success("反馈已保存。兴趣、难度和继续意愿只反映你的主观感受。")
+    section_heading("比较三个方向", "结合日常工作、技能与自己的经历")
     for index, (col, job) in enumerate(zip(st.columns(3, gap="medium"), jobs)):
         with col, st.container(key="role_card_" + job["id"]):
             code = {"backend": "</>", "frontend": "[]", "testing": "✓"}[job["id"]]
@@ -251,36 +320,6 @@ def opportunity_page():
                 choose_job(job["id"])
                 go_to("职业分析")
     st.caption("岗位介绍是通用工作内容，不代表具体企业要求；画像对照只反映填写情况，不是熟练度评估。")
-    section_heading("想先试试看？", "可选体验 · 可以跳过，不影响继续")
-    with st.expander("用一个小任务，感受真实的工作方式", expanded=bool(st.session_state.get("active_task"))):
-        task_job = st.selectbox("选择想体验的方向", [job["id"] for job in jobs], index=[job["id"] for job in jobs].index(selected) if selected in [job["id"] for job in jobs] else 0, format_func=job_name, key="experience_job")
-        task = JOB_BY_ID[task_job]["starter_task"]
-        st.markdown("#### " + task["title"])
-        st.write(task["description"])
-        st.caption(task["duration"] + " · 只帮助你感受工作，不作为能力测评。")
-        begin, skip = st.columns(2)
-        if begin.button("开始并记录体验", key="start_" + task_job, use_container_width=True):
-            result = api("POST", "/experience-feedback", json={"job_category": task_job, "choice": "started", "task_status": "started"})
-            if result is not None:
-                st.session_state["active_task"] = task_job
-        if skip.button("暂不体验", key="skip_" + task_job, use_container_width=True):
-            if api("POST", "/experience-feedback", json={"job_category": task_job, "choice": "skipped", "task_status": "skipped"}) is not None:
-                st.session_state.pop("active_task", None)
-                st.success("已记录跳过。你可以直接选择方向继续分析。")
-        if st.session_state.get("active_task") == task_job:
-            with st.form("feedback_" + task_job):
-                task_status = st.radio("本次体验状态", ["started", "completed"], format_func=lambda value: "已开始，尚未完成" if value == "started" else "已完成", horizontal=True)
-                feedback_cols = st.columns(3)
-                interest = feedback_cols[0].slider("兴趣程度", 1, 5, 3)
-                difficulty = feedback_cols[1].slider("主观难度", 1, 5, 3, help="1 很轻松；3 有挑战但能完成；5 非常吃力。")
-                continued = feedback_cols[2].slider("继续意愿", 1, 5, 3)
-                st.caption("三个维度分别记录，不会合并为岗位分数。难度：1 很轻松，3 有挑战但能完成，5 非常吃力。")
-                note = st.text_input("体验感受（选填）")
-                save = st.form_submit_button("保存体验反馈", type="primary")
-            if save:
-                result = api("POST", "/experience-feedback", json={"job_category": task_job, "choice": "started", "task_status": task_status, "interest": interest, "difficulty": difficulty, "continue_interest": continued, "note": note})
-                if result is not None:
-                    st.success("反馈已保存。兴趣、难度和继续意愿只反映你的主观感受。")
     feedback = summarize_experience_feedback(api("GET", "/experience-feedback") or [])
     if feedback:
         with st.expander("回顾已保存的体验反馈"):
@@ -294,6 +333,73 @@ def opportunity_page():
                     st.caption("兴趣 {0}/5 · 主观难度 {1}/5 · 继续意愿 {2}/5".format(item["interest"], item.get("difficulty", "—"), item.get("continue_interest", "—")))
                 if item.get("note"):
                     st.write(item["note"])
+
+
+def consultation_section(selected):
+    with st.container(key="consultation_panel"):
+        st.markdown('<div class="consultation-intro"><span>职业问答</span><h2>想了解这个岗位？直接问。</h2><p>关于日常工作、已有经历和下一步准备，都可以从这里开始。</p></div>', unsafe_allow_html=True)
+        with st.form("consultation_form", clear_on_submit=True, border=False):
+            custom_question = st.text_area("你的问题", placeholder="例如：后端开发需要怎样的项目经历？", height=95, key="consultation_question")
+            submitted = st.form_submit_button("发送问题", type="primary", icon=":material/send:")
+        st.markdown('<div class="consultation-shortcuts">也可以直接问</div>', unsafe_allow_html=True)
+        shortcuts = ["这个岗位日常做什么？", "哪些经历还需要确认？", "下一步可以先做什么？"]
+        short_cols = st.columns(3)
+        for index, shortcut in enumerate(shortcuts):
+            if short_cols[index].button(shortcut, key="shortcut_" + str(index), use_container_width=True):
+                st.session_state["pending_question"] = shortcut
+        question = custom_question.strip() if submitted else None
+        if submitted and not question:
+            st.info("先输入想了解的问题，再发送。")
+        if not question:
+            question = st.session_state.pop("pending_question", None)
+        if "conversation_id" not in st.session_state:
+            st.session_state["conversation_id"] = None
+        active_conversation = st.session_state.get("conversation_id")
+        if active_conversation and st.session_state.get("loaded_conversation_id") != active_conversation:
+            messages = api("GET", "/conversations/{0}/messages".format(active_conversation))
+            if messages is not None:
+                st.session_state["chat_display"] = [
+                    {"role": item["role"], "content": item["content"], "sources": item.get("sources", [])}
+                    for item in messages
+                ]
+                st.session_state["loaded_conversation_id"] = active_conversation
+        if question:
+            with st.spinner("正在整理回答…"):
+                result = api("POST", "/chat", json={"question": question, "job_category": selected, "conversation_id": st.session_state["conversation_id"]})
+            if result:
+                st.session_state["conversation_id"] = result["conversation_id"]
+                st.session_state["loaded_conversation_id"] = result["conversation_id"]
+                st.session_state.setdefault("chat_display", []).extend([
+                    {"role": "user", "content": question},
+                    {"role": "assistant", "content": result["answer"], "sources": result.get("sources", []), "mode": result.get("mode")},
+                ])
+        for message in st.session_state.get("chat_display", []):
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+                if message["role"] == "assistant" and message.get("sources"):
+                    with st.expander("查看回答依据"):
+                        render_sources(message["sources"])
+                if message["role"] == "assistant" and message.get("mode") in ("demo", "demo_fallback"):
+                    st.caption("本地演示回答 · 模型 API 当前不可用或未配置")
+        with st.expander("打开历史对话"):
+            history = api("GET", "/conversations")
+            if history:
+                options = {"选择一段对话": None}
+                for item in history:
+                    if item["job_category"] == selected:
+                        preview = (item.get("last_message") or "新对话").replace("\n", " ")[:32]
+                        options["#{0} · {1}".format(item["id"], preview)] = item["id"]
+                chosen = st.selectbox("最近保存的对话", list(options.keys()))
+                if options[chosen] and st.button("加载这段对话"):
+                    messages = api("GET", "/conversations/{0}/messages".format(options[chosen]))
+                    if messages is not None:
+                        st.session_state["conversation_id"] = options[chosen]
+                        st.session_state["loaded_conversation_id"] = options[chosen]
+                        st.session_state["chat_display"] = [
+                            {"role": item["role"], "content": item["content"], "sources": item.get("sources", [])}
+                            for item in messages
+                        ]
+                        st.rerun()
 
 
 def analysis_page():
@@ -312,6 +418,7 @@ def analysis_page():
     profile = api("GET", "/profile") or {}
     profile_parts = [profile.get("grade"), profile.get("major"), "、".join(profile.get("skills", []))]
     st.caption("画像摘要：" + (" · ".join(part for part in profile_parts if part) or "尚未填写，可以先补充个人画像。"))
+    consultation_section(selected)
     saved = [item for item in (api("GET", "/analyses") or []) if item.get("job_category") == selected]
     analysis = st.session_state.get("analysis")
     if analysis is None and saved:
@@ -328,7 +435,7 @@ def analysis_page():
                 analysis = history_options[choice]["result"]
                 st.session_state["analysis"] = analysis
     if analysis is None:
-        empty_state("你的第一份岗位分析，从这里开始", "点击“更新职业分析”，查看已有基础、待确认信息与建议行动。也可以先在下方提问。")
+        empty_state("你的第一份岗位分析，从这里开始", "点击“更新职业分析”，查看已有基础、待确认信息与建议行动。也可以先在上方提问。")
     else:
         analysis = normalize_analysis(analysis)
         render_runtime_state(analysis.get("mode"), analysis.get("grounding_status", "no_sources"))
@@ -356,67 +463,6 @@ def analysis_page():
         if st.button("用这份分析制定行动计划", type="primary", icon=":material/arrow_forward:"):
             st.session_state["plan"] = None
             go_to("行动计划")
-    st.divider()
-    section_heading("还有疑问？继续聊聊。", "围绕当前岗位继续探索")
-    shortcuts = ["这个岗位日常做什么？", "哪些经历还需要确认？", "下一步可以先做什么？"]
-    short_cols = st.columns(3)
-    for index, question in enumerate(shortcuts):
-        if short_cols[index].button(question, key="shortcut_" + str(index), use_container_width=True):
-            st.session_state["pending_question"] = question
-    with st.container(key="consultation_input"):
-        question = st.chat_input("输入你想了解的问题")
-    if question is None:
-        question = st.session_state.pop("pending_question", None)
-    if "conversation_id" not in st.session_state:
-        st.session_state["conversation_id"] = None
-    active_conversation = st.session_state.get("conversation_id")
-    if active_conversation and st.session_state.get("loaded_conversation_id") != active_conversation:
-        messages = api("GET", "/conversations/{0}/messages".format(active_conversation))
-        if messages is not None:
-            st.session_state["chat_display"] = [
-                {"role": item["role"], "content": item["content"], "sources": item.get("sources", [])}
-                for item in messages
-            ]
-            st.session_state["loaded_conversation_id"] = active_conversation
-    with st.expander("打开历史对话"):
-        history = api("GET", "/conversations")
-        if history:
-            options = {"选择一段对话": None}
-            for item in history:
-                if item["job_category"] == selected:
-                    preview = (item.get("last_message") or "新对话").replace("\n", " ")[:32]
-                    options["#{0} · {1}".format(item["id"], preview)] = item["id"]
-            chosen = st.selectbox("最近保存的对话", list(options.keys()))
-            if options[chosen] and st.button("加载这段对话"):
-                messages = api("GET", "/conversations/{0}/messages".format(options[chosen]))
-                if messages is not None:
-                    st.session_state["conversation_id"] = options[chosen]
-                    st.session_state["loaded_conversation_id"] = options[chosen]
-                    st.session_state["chat_display"] = [
-                        {"role": item["role"], "content": item["content"], "sources": item.get("sources", [])}
-                        for item in messages
-                    ]
-                    st.rerun()
-    if question:
-        with st.spinner("正在整理回答…"):
-            result = api("POST", "/chat", json={"question": question, "job_category": selected, "conversation_id": st.session_state["conversation_id"]})
-        if result:
-            st.session_state["conversation_id"] = result["conversation_id"]
-            st.session_state["loaded_conversation_id"] = result["conversation_id"]
-            st.session_state.setdefault("chat_display", []).extend([
-                {"role": "user", "content": question},
-                {"role": "assistant", "content": result["answer"], "sources": result.get("sources", []), "mode": result.get("mode")},
-            ])
-    for message in st.session_state.get("chat_display", []):
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-            if message["role"] == "assistant" and message.get("sources"):
-                with st.expander("查看回答依据"):
-                    render_sources(message["sources"])
-            if message["role"] == "assistant" and message.get("mode") in ("demo", "demo_fallback"):
-                st.caption("本地演示回答 · 模型 API 当前不可用或未配置")
-
-
 def set_duration(job, weeks):
     st.session_state["duration_" + job] = weeks
 
@@ -549,6 +595,23 @@ def main():
             "" if online else "warn", "本地服务已连接" if online else "本地服务未连接",
             "" if status and status.get("mode") == "model" else "warn", model_label,
             "" if status else "warn", retrieval), unsafe_allow_html=True)
+    if online:
+        with st.sidebar.expander("导入历史记录", expanded=False):
+            visits = [item for item in (api("GET", "/visits") or []) if item["visit_id"] != st.session_state["visit_id"]]
+            if visits:
+                options = {
+                    "{0} · {1} · {2} · {3}".format(
+                        format_date(item["updated_at"]),
+                        " ".join(part for part in (item["grade"], item["major"]) if part) or "未填写画像",
+                        job_name(item["job_category"]) if item["job_category"] else "方向待选",
+                        item["visit_id"][-6:],
+                    ): item["visit_id"] for item in visits
+                }
+                choice = st.selectbox("本机已保存的探索", list(options), key="saved_visit_choice")
+                if st.button("导入选中记录", key="import_visit", use_container_width=True):
+                    activate_visit(options[choice])
+            else:
+                st.caption("暂无可导入的历史记录。")
     if not online:
         page_header("CAREER WORKSPACE", "工作台正在等待连接", "启动本地服务后，就能继续查看你的画像、分析和计划。")
         st.info("请在项目目录启动后端服务，然后点击重新连接。")
@@ -559,8 +622,8 @@ def main():
     identity = " · ".join(value for value in [profile.get("grade"), profile.get("major")] if value) or "欢迎，新同学"
     with st.container(key="workspace_header"):
         st.markdown('<div class="workspace-topline"><span>向前 / <b>{0}</b></span><span class="topline-badge">{1}</span></div>'.format(html(page), html(identity)), unsafe_allow_html=True)
-        if st.button("重新开始", key="restart_visit", icon=":material/restart_alt:", use_container_width=False):
-            restart_visit()
+        if st.button("新建", key="new_visit", icon=":material/add:", use_container_width=False):
+            new_visit()
     {"今日概览": overview_page, "个人画像": profile_page, "岗位探索": opportunity_page, "职业分析": analysis_page, "行动计划": plan_page}.get(page, overview_page)()
     st.markdown('<div class="page-foot">向前 · 职业规划　/　基于信息，保持探索。你的选择始终由你决定。</div>', unsafe_allow_html=True)
 
