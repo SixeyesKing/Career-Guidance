@@ -146,6 +146,31 @@ hr { border-color: var(--line); margin: 8px 0 !important; }
 .profile-aside b { color: var(--brand); display: block; margin-bottom: 4px; font-size: 12px; }
 .form-section { display: flex; align-items: center; gap: 10px; margin: 3px 0 8px; padding-bottom: 13px; border-bottom: 1px solid #edf1ed; font-weight: 600; font-size: 15px; }
 .form-section span { font-size: 11px; color: #a0aca1; }
+.st-key-skills_dropdown { position: relative; }
+.st-key-skills_dropdown [data-baseweb="select"] > div:hover,
+.st-key-skills_dropdown [data-baseweb="select"] > div:focus-within {
+  border-color: #0e9c8f;
+  box-shadow: 0 0 0 2px #dff3ee;
+  cursor: pointer;
+}
+.skills-hover-options {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  top: calc(100% - 2px);
+  left: 0;
+  width: min(100%, 440px);
+  padding: 10px;
+  border: 1px solid #b8dcd6;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 10px 22px #1558531a;
+  pointer-events: none;
+}
+.st-key-skills_dropdown:hover .skills-hover-options,
+.st-key-skills_dropdown:focus-within .skills-hover-options { display: flex; flex-wrap: wrap; gap: 6px; }
+.st-key-skills_dropdown:has([aria-expanded="true"]) .skills-hover-options { display: none; }
+.skills-hover-options span { padding: 4px 7px; border-radius: 4px; color: #276c66; background: #e8f5f2; font-size: 12px; }
 [class*="st-key-role_card_"] { padding: 23px !important; background: white; border: 1px solid var(--line); border-radius: 8px; }
 [class*="st-key-role_card_"]:has(.role-selected) { border-color: #478064; box-shadow: 0 0 0 1px #478064; }
 .job-card-top { display: flex; justify-content: space-between; align-items: center; }
@@ -348,7 +373,7 @@ p, li { font-size: 15px; }
 .section-heading > span { line-height: 1.5; }
 .record-meta, .comparison-box, .tag, .resource-link { overflow-wrap: anywhere; }
 
-/* The task is visible before the job cards. */
+/* The optional task follows the role comparison. */
 .st-key-experience_panel {
   margin: 12px 0 8px; padding: 22px 24px;
   border: 1px solid #edcf8d; border-left: 5px solid #ef7658;
@@ -370,7 +395,7 @@ p, li { font-size: 15px; }
 .st-key-experience_panel .stButton button[kind="secondary"] { background: transparent; border-color: #e4cfa8; }
 .st-key-experience_panel [data-testid="stForm"] { margin-top: 16px; }
 
-/* Questions are an explicit action near the top of analysis. */
+/* Questions follow the current analysis result. */
 .st-key-consultation_panel {
   margin: 14px 0 25px; padding: 24px 26px;
   border: 1px solid #b9d5eb; border-left: 5px solid #4b90c7;

@@ -8,7 +8,7 @@ from openpyxl import load_workbook
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_DIR = ROOT / "知识库"
+SOURCE_DIR = ROOT / "归档_非运行资料" / "知识库"
 WORKBOOK = SOURCE_DIR / "岗位招聘汇总_300版.xlsx"
 OUTPUT_DIR = ROOT / "data" / "knowledge" / "generated"
 MANIFEST_PATH = OUTPUT_DIR / ".generated_files.json"

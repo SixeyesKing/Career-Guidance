@@ -97,6 +97,8 @@ if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 
 两个终端都要保持运行。停止项目时分别按 `Ctrl+C`；之后使用只需重复启动后端和前端，不必重新安装依赖。
 
+需要把临时链接发给外网访问者时，按 [ngrok 临时分享说明](NGROK_临时分享说明.md) 使用独立演示数据库启动，不要直接分享日常使用的数据。
+
 ### macOS / Linux 命令参考
 
 尚未在本项目中完成这两个平台的整体验收，可按相同架构运行：
@@ -209,17 +211,17 @@ test -f .env || cp .env.example .env
 
 | 目录 / 文件 | 作用 |
 | --- | --- |
-| `知识库/岗位招聘汇总_300版.xlsx` | 整理脚本实际读取的岗位台账 |
-| `知识库/01_岗位能力/` 至 `05_面试准备/` | 原始岗位能力、招聘流程、时间安排、学习路径和面试指南 |
+| `归档_非运行资料/知识库/岗位招聘汇总_300版.xlsx` | 整理脚本实际读取的岗位台账 |
+| `归档_非运行资料/知识库/01_岗位能力/` 至 `05_面试准备/` | 原始岗位能力、招聘流程、时间安排、学习路径和面试指南 |
 | `data/knowledge/generated/` | 从原件生成的 RAG Markdown 和生成文件清单 |
 | `data/knowledge/learning_resources/` | 手工维护的课程、官方文档和学习入口 |
 | `data/chroma/` | 本机生成的向量索引，不随仓库上传 |
 
-仓库带有整理后的 Markdown，可以直接用关键词检索，不必先调用收费模型建立索引。根目录其他岗位汇总 Excel 是参考资料，整理脚本不会自动读取它们。
+仓库带有整理后的 Markdown，可以直接用关键词检索，不必先调用收费模型建立索引。归档目录中的其他岗位汇总 Excel 是参考资料，整理脚本不会自动读取它们。
 
 ### 更新岗位与指南
 
-修改 `知识库/` 中原始文件后，在项目根目录执行：
+修改 `归档_非运行资料/知识库/` 中原始文件后，在项目根目录执行：
 
 ```powershell
 .\.venv\Scripts\python.exe scripts/prepare_knowledge.py
@@ -300,21 +302,13 @@ Career-Guidance/
 ├── data/knowledge/
 │   ├── generated/              # 已整理语料
 │   └── learning_resources/     # 手工学习资料
-├── 知识库/                      # 原始 Excel 与 Markdown
-├── content/                     # 页面设计 HTML 草稿
-├── docs/superpowers/
-│   ├── specs/                  # 设计规格与更改说明
-│   └── plans/                  # 实施与验收记录
-├── .superpowers/brainstorm/     # 早期设计预览；运行状态文件不提交
-├── 2026-09-29/                  # 早期项目计划存档
-├── exports/                    # 本地产物，仓库仅保留空目录占位
-├── 项目计划书.md                 # 项目背景与方案
-└── 程序员工作内容说明.md          # 岗位参考说明
+├── exports/                    # 运行时导出目录，仓库仅保留空目录占位
+└── 归档_非运行资料/              # 原始知识库、设计稿、课程材料与历史产物
 ```
 
 请求流程为：浏览器 → Streamlit → FastAPI → 业务服务 → SQLite / 知识检索 / 可选模型 API。Streamlit 控制页面与访问状态，FastAPI 负责数据和业务操作，SQLite 存储个人记录，Chroma 只保存知识向量索引。
 
-`content/` 中的 HTML 是设计参考，不是应用入口；实际界面从 `app/ui.py` 启动。历史规格中可能包含尚未实现或已调整的方案，当前功能以代码及本 README 为准。欢迎页与会话更改参见 [访问行为说明](docs/superpowers/plans/2026-10-03-welcome-per-visit.md)，UI 改版参见 [设计规格](docs/superpowers/specs/2026-10-03-career-guidance-ui-redesign-design.md)。
+归档中的 `content/` HTML 是设计参考，不是应用入口；实际界面从 `app/ui.py` 启动。历史规格中可能包含尚未实现或已调整的方案，当前功能以代码及本 README 为准。欢迎页与会话更改参见 [访问行为说明](归档_非运行资料/docs/superpowers/plans/2026-10-03-welcome-per-visit.md)，UI 改版参见 [设计规格](归档_非运行资料/docs/superpowers/specs/2026-10-03-career-guidance-ui-redesign-design.md)。
 
 ## API 使用说明
 
@@ -389,7 +383,7 @@ Invoke-RestMethod -Uri http://127.0.0.1:8002/profile -Headers $careerHeaders
 
 ## 仓库内容与协作
 
-仓库保留应用源码、依赖说明、测试、设计草稿、实施文档、原始知识库与已整理语料。安装依赖后可在新电脑重建运行环境。
+仓库根目录保留应用源码、依赖说明、测试和已整理语料；设计草稿、实施文档与原始知识库统一放在 `归档_非运行资料/`。安装依赖后可在新电脑重建运行环境。
 
 以下内容只保存在本地，由 [.gitignore](.gitignore) 排除：真实 `.env`、Streamlit secrets、虚拟环境、Python 缓存、用户 SQLite 数据库及辅助文件、会话记录、Chroma 索引、日志、导出文件和预览服务运行状态。`.env.example` 只包含配置名称和非敏感默认值。
 

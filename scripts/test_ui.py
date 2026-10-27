@@ -22,6 +22,7 @@ class FakeAPI:
         self.feedback = []
         self.chats = []
         self.offline = False
+        self.fail_analysis = False
         self.calls = []
 
     def request(self, method, url, **kwargs):
@@ -44,6 +45,8 @@ class FakeAPI:
             data = {"status": "saved"}
             self.feedback.insert(0, kwargs["json"])
         elif method == "POST" and path.startswith("/analysis/"):
+            if self.fail_analysis:
+                raise requests.ConnectionError("analysis unavailable")
             job = path.rsplit("/", 1)[1]
             data = {"mode": "demo_fallback", "grounding_status": "no_sources", "known_basics": [job + " 已知基础"], "to_confirm": ["项目职责仍需确认"], "actions": ["整理一项项目：形成三条可复核记录。"], "sources": []}
             self.analyses.insert(0, {"id": len(self.analyses) + 1, "job_category": job, "created_at": "2026-10-03T10:00:00+08:00", "result": data})
@@ -112,6 +115,31 @@ class WorkspaceTest(unittest.TestCase):
         self.nav("今日概览")
         self.assertIn("三个方向，慢慢了解", self.text())
 
+    def test_custom_interests_are_saved_and_restored(self):
+        self.run_app()
+        self.nav("个人画像")
+        skills = next(item for item in self.at.multiselect if item.label == "接触过的技术")
+        self.assertIn("Python", skills.options)
+        interests = next(item for item in self.at.multiselect if item.label == "你更愿意做哪些事情？")
+        interests.set_value(["实现功能"])
+        next(item for item in self.at.text_input if item.label == "其他想做的事情（选填）").set_value("写脚本，做实验, 写脚本, 实现功能")
+        self.button("保存个人画像").click()
+        self.run_app()
+        self.assertEqual(self.api.profile["interests"], ["实现功能", "写脚本", "做实验"])
+        self.nav("今日概览")
+        self.nav("个人画像")
+        interests = next(item for item in self.at.multiselect if item.label == "你更愿意做哪些事情？")
+        self.assertIn("写脚本", interests.options)
+        self.assertEqual(interests.value, ["实现功能", "写脚本", "做实验"])
+
+    def test_role_comparison_precedes_experience(self):
+        self.run_app()
+        self.nav("岗位探索")
+        content = self.text()
+        self.assertLess(content.index("比较三个方向"), content.index("想先试试看？"))
+        self.assertTrue(self.at.button(key="start_backend"))
+        self.assertTrue(self.at.button(key="skip_backend"))
+
     def test_analysis_and_chat_do_not_leak_across_jobs(self):
         self.run_app()
         self.nav("岗位探索")
@@ -142,6 +170,31 @@ class WorkspaceTest(unittest.TestCase):
         self.assertEqual(chat_calls[0]["question"], "我该如何准备第一个后端项目？")
         self.assertEqual(chat_calls[0]["job_category"], "backend")
         self.assertEqual(len(self.at.chat_message), 2)
+
+    def test_analysis_refresh_reorders_and_resets_chat(self):
+        self.run_app()
+        self.nav("职业分析")
+        self.at.button(key="shortcut_0").click()
+        self.run_app()
+        self.assertEqual(len(self.at.chat_message), 2)
+        self.button("更新职业分析").click()
+        self.run_app()
+        content = self.text()
+        self.assertLess(content.index("backend 已知基础"), content.index("职业问答"))
+        self.assertEqual(len(self.at.chat_message), 0)
+        self.assertIsNone(self.at.session_state["conversation_id"])
+        self.assertNotIn("测试回答", content)
+
+    def test_failed_analysis_refresh_keeps_chat(self):
+        self.run_app()
+        self.nav("职业分析")
+        self.at.button(key="shortcut_0").click()
+        self.run_app()
+        self.api.fail_analysis = True
+        self.button("更新职业分析").click()
+        self.run_app()
+        self.assertEqual(len(self.at.chat_message), 2)
+        self.assertIn("测试回答", self.text())
 
     def test_feedback_start_complete_and_skip(self):
         self.run_app()

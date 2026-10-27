@@ -1,0 +1,65 @@
+<style>
+  :root { --ink:#173b40; --muted:#668080; --line:#d8e9e6; --paper:#f7fbfa; --white:#fff; --teal:#087f76; --coral:#f4785d; --soft:#e8f4f2; --warm:#fff4e8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,"Noto Sans SC",system-ui,sans-serif; }
+  .wrap { max-width:1120px; margin:0 auto; padding:28px; }
+  .kicker { color:var(--teal); font-size:11px; font-weight:800; letter-spacing:.12em; }
+  h1 { margin:8px 0 6px; font-size:30px; }
+  .lead { color:var(--muted); margin:0 0 22px; font-size:13px; }
+  .split { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .screen { background:var(--white); border:1px solid var(--line); border-radius:8px; padding:20px; box-shadow:0 10px 30px rgba(32,93,88,.06); }
+  .screen h2 { font-size:18px; margin:0 0 5px; }
+  .screen > p { color:var(--muted); font-size:12px; margin:0 0 16px; }
+  .task { display:grid; grid-template-columns:1fr 132px; gap:14px; padding:14px; background:#f4faf8; border:1px solid #d9eee9; border-radius:7px; }
+  .task strong { display:block; font-size:13px; margin-bottom:5px; }
+  .task span { color:var(--muted); font-size:11px; line-height:1.6; }
+  .task button, .primary { border:0; border-radius:5px; background:var(--teal); color:#fff; font-weight:700; padding:9px 11px; font-size:11px; }
+  .task button { align-self:center; }
+  .compare { margin-top:16px; border-top:1px solid var(--line); padding-top:14px; }
+  .compare-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .compare-head b { font-size:14px; }
+  .compare-head span { color:var(--muted); font-size:10px; }
+  .roles { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .role { border:1px solid var(--line); border-radius:6px; padding:11px; }
+  .role b { font-size:12px; }
+  .role p { color:var(--muted); font-size:10px; line-height:1.5; min-height:30px; }
+  .role button { width:100%; border:1px solid #9fd1c7; background:#fff; color:var(--teal); padding:7px; border-radius:4px; font-size:10px; }
+  .analysis { border-left:4px solid var(--coral); padding-left:15px; }
+  .analysis-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+  .analysis-top strong { font-size:15px; }
+  .analysis-top small { display:block; color:var(--muted); font-size:10px; margin-top:4px; }
+  .analysis-top .primary { white-space:nowrap; }
+  .columns { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:15px; }
+  .box { border:1px solid var(--line); border-radius:6px; padding:11px; }
+  .box b { font-size:11px; }
+  .box li { color:var(--muted); font-size:10px; margin:7px 0; }
+  .chat { margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
+  .chat-head { display:flex; justify-content:space-between; align-items:center; }
+  .chat-head b { font-size:14px; }
+  .chat-head span { color:var(--muted); font-size:10px; }
+  .chat-row { margin-top:10px; border:1px solid var(--line); border-radius:6px; padding:9px 11px; font-size:11px; }
+  .chat-row.user { background:#f4faf8; }
+  .chat-row.ai { color:#567170; }
+  .note { margin-top:18px; color:var(--muted); font-size:11px; }
+  @media (max-width:850px) { .split { grid-template-columns:1fr; } }
+</style>
+<div class="wrap">
+  <div class="kicker">INTERACTION HIERARCHY / 交互层级</div>
+  <h1>把下一步放在用户看得到的位置</h1>
+  <p class="lead">岗位探索先呈现可选体验，再比较三个方向；职业分析先呈现最新结果，再放职业问答和历史记录。</p>
+  <div class="split">
+    <section class="screen">
+      <h2>岗位探索</h2>
+      <p>先试试看成为页面的第一步，比较方向紧随其后。</p>
+      <div class="task"><div><strong>动手试试 · 30 分钟</strong><span>体验一个真实的小任务，完成后再判断自己是否喜欢这个方向。</span></div><button>开始体验</button></div>
+      <div class="compare"><div class="compare-head"><b>比较三个方向</b><span>结合日常工作、技能与经历</span></div><div class="roles"><div class="role"><b>后端开发</b><p>服务、接口与数据</p><button>选择方向</button></div><div class="role"><b>前端开发</b><p>页面、交互与体验</p><button>选择方向</button></div><div class="role"><b>测试开发</b><p>质量、自动化与验证</p><button>选择方向</button></div></div></div>
+    </section>
+    <section class="screen">
+      <div class="analysis"><div class="analysis-top"><div><strong>后端开发 · 最新职业分析</strong><small>刚刚更新 · 基于当前个人画像</small></div><button class="primary">更新职业分析</button></div>
+        <div class="columns"><div class="box"><b>已经提到的基础</b><ul><li>Python 与接口基础</li><li>课程项目中的数据处理</li></ul></div><div class="box"><b>还需要确认</b><ul><li>项目中的实际职责</li><li>SQL 的应用深度</li></ul></div></div>
+      </div>
+      <div class="chat"><div class="chat-head"><b>职业问答</b><span>对最新分析继续追问</span></div><div class="chat-row user">哪些经历还需要确认？</div><div class="chat-row ai">可以先补充项目中你负责的接口、数据表和排查问题记录。</div></div>
+      <div class="note">更新后的分析固定在问答之前，避免用户在长对话底部找不到新结果。</div>
+    </section>
+  </div>
+</div>

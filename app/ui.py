@@ -100,6 +100,10 @@ def job_name(job_id):
     return next((job["name"] for job in JOBS if job["id"] == job_id), job_id)
 
 
+def split_comma_values(value):
+    return list(dict.fromkeys(item.strip() for item in value.replace("，", ",").split(",") if item.strip()))
+
+
 def choose_job(job_id):
     changed = job_id != st.session_state.get("job_category")
     if changed:
@@ -151,7 +155,7 @@ def overview_page():
                     go_to("个人画像")
                 st.markdown('<div class="welcome-time">约 2 分钟，先写下你已经知道的部分。</div>', unsafe_allow_html=True)
             with visual:
-                st.image(str(PROJECT_ROOT / "app" / "assets" / "career-journey.svg"), width="stretch")
+                st.image((PROJECT_ROOT / "app" / "assets" / "career-journey.svg").read_text(encoding="utf-8"), width="stretch")
         section_heading("先认识现在的你", "从这里开始")
         st.markdown('<div class="welcome-steps"><div class="welcome-step"><span>01</span><div><b>你的学习阶段</b><small>专业与年级</small></div></div><div class="welcome-step"><span>02</span><div><b>你做过的事</b><small>技能、课程与项目</small></div></div><div class="welcome-step"><span>03</span><div><b>你的准备节奏</b><small>每周可投入的时间</small></div></div></div>', unsafe_allow_html=True)
         return
@@ -238,20 +242,26 @@ def profile_page():
             st.markdown('<div class="form-section"><span>02</span>技能与经历</div>', unsafe_allow_html=True)
             current_skills = profile.get("skills", [])
             known = ["Java", "Python", "MySQL", "HTML / CSS", "JavaScript", "Git", "Linux", "接口测试"]
-            selected_skills = st.multiselect("接触过的技术", known, default=[item for item in current_skills if item in known], placeholder="选出你接触过的技术，不要求熟练")
+            with st.container(key="skills_dropdown"):
+                selected_skills = st.multiselect("接触过的技术", known, default=[item for item in current_skills if item in known], placeholder="选出你接触过的技术，不要求熟练")
+                st.markdown('<div class="skills-hover-options">' + ''.join('<span>{0}</span>'.format(html(item)) for item in known) + '</div>', unsafe_allow_html=True)
             other_skills = st.text_input("其他技术（选填）", value=", ".join([item for item in current_skills if item not in known]), placeholder="例如：Vue，Docker，用逗号分隔")
             experience = st.text_area("课程项目或实习经历", profile.get("experience_text", ""), height=135, placeholder="做过什么项目？你负责哪一部分？遇到过什么问题？课程作业和个人小项目都可以写。")
             st.markdown('<div class="form-section"><span>03</span>兴趣与准备节奏</div>', unsafe_allow_html=True)
             options = ["实现功能", "制作页面", "发现和定位问题", "分析数据", "还不确定"]
-            interests = st.multiselect("你更愿意做哪些事情？", options, default=[item for item in profile.get("interests", []) if item in options], placeholder="不确定也没关系")
+            saved_interests = profile.get("interests", [])
+            interest_options = list(dict.fromkeys(options + saved_interests))
+            interests = st.multiselect("你更愿意做哪些事情？", interest_options, default=saved_interests, placeholder="不确定也没关系")
+            other_interests = st.text_input("其他想做的事情（选填）", placeholder="例如：写脚本，做实验，用逗号分隔")
             col_c, col_d = st.columns(2)
             city = col_c.text_input("意向城市（选填）", profile.get("target_city", ""), placeholder="例如：杭州，或暂时不限")
             hours = col_d.number_input("每周准备时间（小时）", min_value=1, max_value=40, value=max(1, min(40, int(profile.get("weekly_hours") or 5))), step=1)
             st.caption("准备时间只统计职业探索、项目梳理、学习和求职准备，不包括上课和课程作业。")
             submitted = st.form_submit_button("保存个人画像", type="primary", use_container_width=True)
         if submitted:
-            skills = selected_skills + [item.strip() for item in other_skills.replace("，", ",").split(",") if item.strip()]
-            result = api("PUT", "/profile", json={"grade": "" if grade == "暂不填写" else grade, "major": major, "skills": list(dict.fromkeys(skills)), "experience_text": experience, "interests": interests, "target_city": city, "weekly_hours": int(hours)})
+            skills = list(dict.fromkeys(selected_skills + split_comma_values(other_skills)))
+            selected_interests = list(dict.fromkeys(interests + split_comma_values(other_interests)))
+            result = api("PUT", "/profile", json={"grade": "" if grade == "暂不填写" else grade, "major": major, "skills": skills, "experience_text": experience, "interests": selected_interests, "target_city": city, "weekly_hours": int(hours)})
             if result is not None:
                 st.success("画像已保存。下一步，看看不同岗位的日常工作。")
                 st.session_state["profile_saved"] = True
@@ -273,6 +283,23 @@ def opportunity_page():
         st.caption("画像中提到：" + " · ".join(profile["skills"]))
     else:
         st.caption("还没有填写技术经历也可以先比较；未填写的信息不会被当作能力不足。")
+    section_heading("比较三个方向", "结合日常工作、技能与自己的经历")
+    for index, (col, job) in enumerate(zip(st.columns(3, gap="medium"), jobs)):
+        with col, st.container(key="role_card_" + job["id"]):
+            code = {"backend": "</>", "frontend": "[]", "testing": "✓"}[job["id"]]
+            is_selected = selected == job["id"]
+            badge = '<span class="state-pill ok role-selected">当前关注</span>' if is_selected else '<span class="job-code">0{0}</span>'.format(index + 1)
+            st.markdown('<div class="job-card-top"><div class="role-monogram {0}">{1}</div>{2}</div><div class="job-title">{3}</div><div class="job-code">{4}</div><p class="job-summary">{5}</p>'.format(job["id"], html(code), badge, html(job["name"]), html(job["english"]), html(job["summary"])), unsafe_allow_html=True)
+            st.markdown('<div class="comparison-label">日常会做什么</div><ul class="work-list">' + ''.join('<li>{0}</li>'.format(html(item)) for item in job["daily_work"]) + '</ul>', unsafe_allow_html=True)
+            st.markdown('<div><div class="comparison-label">经常用到的技能</div><div class="skill-tags">' + ''.join('<span class="tag">{0}</span>'.format(html(skill)) for skill in job["skills"]) + '</div></div>', unsafe_allow_html=True)
+            skills = [value.lower() for value in profile.get("skills", [])]
+            matched = [label for label, aliases in SKILL_CHECKS[job["id"]] if any(alias in skill for alias in aliases for skill in skills)]
+            gaps = [label for label, aliases in SKILL_CHECKS[job["id"]] if label not in matched]
+            st.markdown('<div class="comparison-box"><p><b>画像中已提到</b>{0}</p><p class="unknown"><b>目前还待了解</b>{1}</p></div>'.format(html("、".join(matched) or "暂无相关记录，可以之后补充。"), html("、".join(gaps) or "已有技能的实际应用与熟练程度。")), unsafe_allow_html=True)
+            if st.button("继续分析此方向" if is_selected else "选择这个方向", key="choose_" + job["id"], type="primary" if is_selected else "secondary", use_container_width=True):
+                choose_job(job["id"])
+                go_to("职业分析")
+    st.caption("岗位介绍是通用工作内容，不代表具体企业要求；画像对照只反映填写情况，不是熟练度评估。")
     with st.container(key="experience_panel"):
         details, controls = st.columns([2.2, 1], gap="large", vertical_alignment="center")
         with controls:
@@ -303,23 +330,6 @@ def opportunity_page():
                 result = api("POST", "/experience-feedback", json={"job_category": task_job, "choice": "started", "task_status": task_status, "interest": interest, "difficulty": difficulty, "continue_interest": continued, "note": note})
                 if result is not None:
                     st.success("反馈已保存。兴趣、难度和继续意愿只反映你的主观感受。")
-    section_heading("比较三个方向", "结合日常工作、技能与自己的经历")
-    for index, (col, job) in enumerate(zip(st.columns(3, gap="medium"), jobs)):
-        with col, st.container(key="role_card_" + job["id"]):
-            code = {"backend": "</>", "frontend": "[]", "testing": "✓"}[job["id"]]
-            is_selected = selected == job["id"]
-            badge = '<span class="state-pill ok role-selected">当前关注</span>' if is_selected else '<span class="job-code">0{0}</span>'.format(index + 1)
-            st.markdown('<div class="job-card-top"><div class="role-monogram {0}">{1}</div>{2}</div><div class="job-title">{3}</div><div class="job-code">{4}</div><p class="job-summary">{5}</p>'.format(job["id"], html(code), badge, html(job["name"]), html(job["english"]), html(job["summary"])), unsafe_allow_html=True)
-            st.markdown('<div class="comparison-label">日常会做什么</div><ul class="work-list">' + ''.join('<li>{0}</li>'.format(html(item)) for item in job["daily_work"]) + '</ul>', unsafe_allow_html=True)
-            st.markdown('<div><div class="comparison-label">经常用到的技能</div><div class="skill-tags">' + ''.join('<span class="tag">{0}</span>'.format(html(skill)) for skill in job["skills"]) + '</div></div>', unsafe_allow_html=True)
-            skills = [value.lower() for value in profile.get("skills", [])]
-            matched = [label for label, aliases in SKILL_CHECKS[job["id"]] if any(alias in skill for alias in aliases for skill in skills)]
-            gaps = [label for label, aliases in SKILL_CHECKS[job["id"]] if label not in matched]
-            st.markdown('<div class="comparison-box"><p><b>画像中已提到</b>{0}</p><p class="unknown"><b>目前还待了解</b>{1}</p></div>'.format(html("、".join(matched) or "暂无相关记录，可以之后补充。"), html("、".join(gaps) or "已有技能的实际应用与熟练程度。")), unsafe_allow_html=True)
-            if st.button("继续分析此方向" if is_selected else "选择这个方向", key="choose_" + job["id"], type="primary" if is_selected else "secondary", use_container_width=True):
-                choose_job(job["id"])
-                go_to("职业分析")
-    st.caption("岗位介绍是通用工作内容，不代表具体企业要求；画像对照只反映填写情况，不是熟练度评估。")
     feedback = summarize_experience_feedback(api("GET", "/experience-feedback") or [])
     if feedback:
         with st.expander("回顾已保存的体验反馈"):
@@ -415,27 +425,19 @@ def analysis_page():
         if result:
             st.session_state["analysis"] = result
             st.session_state["analysis_job"] = selected
+            for key in ("chat_display", "conversation_id", "loaded_conversation_id", "pending_question"):
+                st.session_state.pop(key, None)
     profile = api("GET", "/profile") or {}
     profile_parts = [profile.get("grade"), profile.get("major"), "、".join(profile.get("skills", []))]
     st.caption("画像摘要：" + (" · ".join(part for part in profile_parts if part) or "尚未填写，可以先补充个人画像。"))
-    consultation_section(selected)
     saved = [item for item in (api("GET", "/analyses") or []) if item.get("job_category") == selected]
     analysis = st.session_state.get("analysis")
     if analysis is None and saved:
         analysis = saved[0].get("result")
         st.session_state["analysis"] = analysis
         st.session_state["analysis_job"] = selected
-    if saved:
-        with st.expander("查看历史分析 · {0} 个版本".format(len(saved))):
-            history_options = {"当前分析": None}
-            for row in saved:
-                history_options["#{0} · {1}".format(row["id"], format_date(row.get("created_at")))] = row
-            choice = st.selectbox("已保存的分析版本", list(history_options), key="analysis_history_" + selected)
-            if history_options[choice] and st.button("打开这个分析版本"):
-                analysis = history_options[choice]["result"]
-                st.session_state["analysis"] = analysis
     if analysis is None:
-        empty_state("你的第一份岗位分析，从这里开始", "点击“更新职业分析”，查看已有基础、待确认信息与建议行动。也可以先在上方提问。")
+        empty_state("你的第一份岗位分析，从这里开始", "点击“更新职业分析”，查看已有基础、待确认信息与建议行动。也可以继续在下方提问。")
     else:
         analysis = normalize_analysis(analysis)
         render_runtime_state(analysis.get("mode"), analysis.get("grounding_status", "no_sources"))
@@ -463,6 +465,18 @@ def analysis_page():
         if st.button("用这份分析制定行动计划", type="primary", icon=":material/arrow_forward:"):
             st.session_state["plan"] = None
             go_to("行动计划")
+    consultation_section(selected)
+    if saved:
+        with st.expander("查看历史分析 · {0} 个版本".format(len(saved))):
+            history_options = {"当前分析": None}
+            for row in saved:
+                history_options["#{0} · {1}".format(row["id"], format_date(row.get("created_at")))] = row
+            choice = st.selectbox("已保存的分析版本", list(history_options), key="analysis_history_" + selected)
+            if history_options[choice] and st.button("打开这个分析版本"):
+                st.session_state["analysis"] = history_options[choice]["result"]
+                st.rerun()
+
+
 def set_duration(job, weeks):
     st.session_state["duration_" + job] = weeks
 

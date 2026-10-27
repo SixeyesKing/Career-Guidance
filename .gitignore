@@ -19,4 +19,10 @@ data/chroma/
 data/sessions/
 exports/*
 !exports/.gitkeep
+归档_非运行资料/.agents/
+归档_非运行资料/.codex-finalizer/
+归档_非运行资料/.codex-pitch-build/
+归档_非运行资料/就业指导要求/
+归档_非运行资料/exports/
+归档_非运行资料/.superpowers/**/state/
 .streamlit/secrets.toml
